@@ -1,3 +1,4 @@
+const PropertySchema = require('../models/propertyschema')
 const StateSchema = require('../models/stateSchema')
 const TsSchema = require('../models/tsSchema')
 const propertyservice = require('../services/propertyservice')
@@ -73,6 +74,11 @@ class PropertyController {
 
     async getAllTsData(req, res) {
         const response = await TsSchema.find({})
+        for(let resp in response){
+            const properties = await PropertySchema.find({'tracks_id':response[resp].id})
+            response[resp]['_doc']['properties'] = properties
+            }
+            
         res.status(200).send({
             success: true,
             message: 'Data obtained !',

@@ -4,7 +4,13 @@ const fs = require('fs')
 
 const PropertySchema = require('../models/propertyschema');
 const TsSchema = require('../models/tsSchema');
-const main_fields = require('../Helper/constants').main_fields
+const const_fields = require('../Helper/constants')
+
+
+const main_fields = const_fields.main_fields
+const parent_keys = const_fields.parent_keys
+const child_keys = const_fields.child_keys
+const grand_child_keys = const_fields.grand_child_keys
 
 const proper_data = new Map()
 class PropertyServices {
@@ -192,30 +198,6 @@ class PropertyServices {
       } 
       //setting building information
       if (key === main_fields[13]) {
-        const parent_keys = [
-          'Sr.No.',
-          'Project Name',
-          'Name',
-          'Proposed Date of Completion (As approved by Competent Authority)',
-          "Number of Basement's",
-          'Number of Plinth',
-          "Number of Podium's",
-          'Number of Slab of Super Structure',
-          'Number of Stilts',
-          'Number of Open Parking',
-          'Total Parking Area (In sqmts)'
-        ]
-        const child_keys = [
-          'Sr.No.',
-          'Floor ID',
-          'Mortgage Area',
-          'Apartment Type',
-          'Saleable Area (in Sqmts)',
-          'Number of Apartment',
-          'Number of Booked Apartment'
-        ]
-
-        const grand_child_keys = ['Sr.No.', 'Tasks / Activity', 'Percentage of Work']
         let ext_data = []
         let result = []
         for (let data in values) {
@@ -352,8 +334,6 @@ class PropertyServices {
     const tsSchema = new TsSchema(payload)
     const res = await tsSchema.save()
     //extracting data from excel
-    await this.getAllPropertyDetails(files.certFileName[0].filename, 'certFileName', res)
-    await this.getAllPropertyDetails(files.certExtFileName[0].filename, 'certExtFileName', res)
     await this.getAllPropertyDetails(files.detailsFileName[0].filename, 'detailsFileName', res)
 
     return ({ 'data': res })
