@@ -318,6 +318,7 @@ class PropertyServices {
   async addAllTsData(req) {
     const files = req.files
     const body = req.body
+    const certExt = files.certExtFileName && files.certExtFileName[0] ? path.resolve() + '/uploads/' + files.certExtFileName[0].filename : ''
     // task details schema payload.
     const payload = {
       state: body.state,
@@ -328,7 +329,7 @@ class PropertyServices {
       projectEndDate: body.projectEndDate,
       detailsURL: body.detailsURL,
       certFileName: path.resolve() + '/uploads/' + files.certFileName[0].filename,
-      certExtFileName: path.resolve() + '/uploads/' + files.certExtFileName[0].filename,
+      certExtFileName: certExt,
       detailsFileName: path.resolve() + '/uploads/' + files.detailsFileName[0].filename,
     }
     const tsSchema = new TsSchema(payload)

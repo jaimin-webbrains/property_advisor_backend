@@ -19,9 +19,8 @@ const tsSchema = new mongoose.Schema({
         required: true
     },
     certExtFileName: {
-        type: String,
-        required: true
-    },
+        type: String
+        },
     detailsFileName: {
         type: String,
         required: true
