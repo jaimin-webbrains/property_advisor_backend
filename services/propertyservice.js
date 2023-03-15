@@ -25,10 +25,15 @@ class PropertyServices {
       //setting general information
       if (key === main_fields[0]) {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const gen_keys = const_fields.gen_info_keys
+        const curr_key = Object.keys(values[0])[0]
+        for (let row = 0; row < values.length; row++) {
+          if (gen_keys.includes(values[row][curr_key]) && !gen_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (gen_keys.includes(values[row]) && gen_keys.includes(values[row+1])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('gen_info', newObj)
@@ -36,10 +41,18 @@ class PropertyServices {
       //setting promoter information 
       if (key === main_fields[1] || key === 'Promoter Information - Individual') {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const prom_keys = const_fields.prom_info_keys
+        const curr_key = Object.keys(values[0])[0]
+        for (let row = 0; row < values.length; row++) {
+          if (prom_keys.includes(values[row][curr_key]) && values[row+1] !== undefined &&!prom_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (prom_keys.includes(values[row][curr_key]) && values[row+1] !== undefined && prom_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
+          }
+          if(values[row+1] === undefined){
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('prom_info', newObj)
@@ -47,10 +60,16 @@ class PropertyServices {
       //setting address details. 
       if (key === main_fields[2] || key === 'Address For Official Communication') {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const addr_keys = const_fields.address_keys
+        const curr_key = Object.keys(values[0])[0]
+
+        for (let row = 0; row < values.length; row++) {
+          if (addr_keys.includes(values[row][curr_key]) && !addr_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (addr_keys.includes(values[row][curr_key]) && addr_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('addr_details', newObj)
@@ -58,10 +77,16 @@ class PropertyServices {
       // setting organization contact details.
       if (key === main_fields[3]) {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const org_cont_keys = const_fields.org_cont_details_keys
+        const curr_key = Object.keys(values[0])[0]
+
+        for (let row = 0; row < values.length; row++) {
+          if (org_cont_keys.includes(values[row][curr_key]) && !org_cont_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (org_cont_keys.includes(values[row][curr_key]) && org_cont_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('org_cont_details', newObj)
@@ -105,10 +130,16 @@ class PropertyServices {
       //setting project information
       if (key === main_fields[6]) {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const proj_keys = const_fields.project_info_keys
+        const curr_key = Object.keys(values[0])[0]
+
+        for (let row = 0; row < values.length; row++) {
+          if (proj_keys.includes(values[row][curr_key]) && !proj_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (proj_keys.includes(values[row][curr_key]) && proj_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('project_info', newObj)
@@ -116,10 +147,16 @@ class PropertyServices {
       // setting land details
       if (key === main_fields[7]) {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const land_keys = const_fields.land_details_keys
+        const curr_key = Object.keys(values[0])[0]
+
+        for (let row = 0; row < values.length; row++) {
+          if (land_keys.includes(values[row][curr_key]) && !land_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (land_keys.includes(values[row][curr_key]) && land_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('land_info', newObj)
@@ -127,10 +164,16 @@ class PropertyServices {
       // setting built up information.
       if (key === main_fields[8]) {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const built_up_keys = const_fields.build_up_details_keys
+        const curr_key = Object.keys(values[0])[0]
+
+        for (let row = 0; row < values.length; row++) {
+          if (built_up_keys.includes(values[row][curr_key]) && !built_up_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (built_up_keys.includes(values[row][curr_key]) && built_up_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('built_up_info', newObj)
@@ -138,10 +181,16 @@ class PropertyServices {
       //setting address information.
       if (key === main_fields[9]) {
         let newObj = {}
-        for (let row = 1; row < values.length; row++) {
-          if (row % 2 === 1) {
+        const addr_keys = const_fields.address_keys
+        const curr_key = Object.keys(values[0])[0]
+
+        for (let row = 0; row < values.length; row++) {
+          if (addr_keys.includes(values[row][curr_key]) && !addr_keys.includes(values[row+1][curr_key])) {
+            newObj[values[row][curr_key]] = values[row+1][curr_key]
+          }
+          if (addr_keys.includes(values[row][curr_key]) && addr_keys.includes(values[row+1][curr_key])) {
             const curr_key = Object.keys(values[0])[0]
-            newObj[values[row - 1][curr_key]] = values[row][curr_key]
+            newObj[values[row][curr_key]] = ''
           }
         }
         proper_data.set('address_details', newObj)
