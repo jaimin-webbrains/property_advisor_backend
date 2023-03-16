@@ -1,6 +1,7 @@
 const PropertySchema = require('../models/propertyschema')
 const StateSchema = require('../models/stateSchema')
 const TsSchema = require('../models/tsSchema')
+const XLSX = require('xlsx');
 const propertyservice = require('../services/propertyservice')
 const path = require('path')
 
@@ -57,7 +58,16 @@ class PropertyController {
                 return res.status(400).send({ message: `File already exist with rera no: ${req.body.reraNumber} and this modified date.` });
             }
             else {
-                const response = await propertyservice.addAllTsData(req)
+                const workbook = XLSX.readFile(path.resolve() + '/uploads/' + req.files.detailsFileName[0].filename);
+                const sheet_name_list = workbook.SheetNames;
+                const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
+                if(xlData[0]['TelanganaRERA Application'] === undefined){
+                   return res.status(400).send({
+                    success: false,
+                    message: 'File has invalid data!.',
+                })
+                }
+                const response = await propertyservice.addAllTsData(req,xlData)
                 res.status(201).send({
                     success: true,
                     message: 'TS data added successfully.',
@@ -80,6 +90,15 @@ class PropertyController {
     }
 
     async getAllTsData(req, res) {
+        const response = await TsSchema.find({})
+        res.status(200).send({
+            success: true,
+            message: 'Data obtained !',
+            data: response
+        })
+    }
+
+    async getAllProperties(req, res) {
         const response = await PropertySchema.find({}).populate('tracks_details')
         res.status(200).send({
             success: true,

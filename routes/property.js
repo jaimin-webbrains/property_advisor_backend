@@ -30,4 +30,8 @@ propertyrouter.get(
     '/get_all_ts_data',
     property.getAllTsData
 )
+propertyrouter.get(
+    '/get_all_properties',
+    property.getAllProperties
+)
 module.exports = propertyrouter;
