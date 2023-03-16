@@ -18,9 +18,9 @@ class PropertyServices {
   async dataConverter(key, values) {
 
     //setting file_type.
-    if (key === 'file_type') {
-      proper_data.set('file_type', values)
-    }
+    // if (key === 'file_type') {
+    //   proper_data.set('file_type', values)
+    // }
     if (Array.isArray(values) && values.length > 1) {
       //setting general information
       if (key === main_fields[0]) {
@@ -359,7 +359,8 @@ class PropertyServices {
 
     // converting Map to object.
     let response = Object.fromEntries(proper_data)
-    response['tracks_id'] = tracks_data.id
+    response['reraNumber'] = tracks_data.reraNumber
+    response['tracks_details'] = tracks_data.id
     const propertySchema = new PropertySchema(response)
     const res_data = await propertySchema.save()
     return ({ 'data': res_data })
@@ -381,6 +382,7 @@ class PropertyServices {
       certExtFileName: certExt,
       detailsFileName: path.resolve() + '/uploads/' + files.detailsFileName[0].filename,
     }
+    const prev_ts_data = await TsSchema.find({'reraNumber':body.reraNumber})
     const tsSchema = new TsSchema(payload)
     const res = await tsSchema.save()
     //extracting data from excel
