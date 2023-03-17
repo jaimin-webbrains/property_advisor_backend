@@ -60,8 +60,8 @@ class PropertyServices {
         for (let row = 0; row < values.length; row++) {
           if (proj_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !proj_keys.includes(values[row + 1][curr_key])) {
             newObj[values[row][curr_key]] = values[row + 1][curr_key]
-            if (values[row][curr_key] === 'Approved Date' || values[row][curr_key] === 'Proposed Date of Completion') {
-              newObj[values[row][curr_key]] = ExcelSerialDateToJSDate(values[row + 1][curr_key])
+            if (values[row][curr_key] === 'Approved Date' || values[row][curr_key] === 'Proposed Date of Completion' ||  values[row][curr_key] === 'Revised Proposed Date of Completion') {
+              newObj[values[row][curr_key]] = ExcelSerialDateToJSDate((values[row + 1][curr_key])+1)
             }
           }
           if (proj_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && proj_keys.includes(values[row + 1][curr_key])) {
