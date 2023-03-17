@@ -463,6 +463,7 @@ class PropertyServices {
       certFileName: path.resolve() + '/uploads/' + files.certFileName[0].filename,
       certExtFileName: certExt,
       detailsFileName: path.resolve() + '/uploads/' + files.detailsFileName[0].filename,
+      paId : body.paId
     }
     const tsSchema = new TsSchema(payload)
     const res = await tsSchema.save()
