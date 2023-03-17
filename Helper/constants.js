@@ -18,7 +18,8 @@ const main_fields = [
     'Promoter Information - Individual', 
     'Address For Official Communication',
     'Contact Details',
-    'Other Organization Type Member Information'
+    'Other Organization Type Member Information',
+    'Plot Details'
 ]
 const parent_keys = [
     'Sr.No.',
@@ -72,6 +73,7 @@ const address_keys = [
     'Street',
     'Locality', 
     'Landmark', 
+    'Land mark',
     'State', 
     'District', 
     'Mandal', 

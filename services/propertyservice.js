@@ -15,121 +15,41 @@ const proper_data = new Map()
 class PropertyServices {
   constructor() { }
   async dataConverter(key, values) {
-    //setting file_type.
-    // if (key === 'file_type') {
-    //   proper_data.set('file_type', values)
-    // }
     if (Array.isArray(values) && values.length > 1) {
+      const curr_key = Object.keys(values[0])[0]
       //setting general information
       if (key === main_fields[0]) {
-        let newObj = {}
-        const gen_keys = const_fields.gen_info_keys
-        const curr_key = Object.keys(values[0])[0]
-        for (let row = 0; row < values.length; row++) {
-          if (gen_keys.includes(values[row][curr_key]) && !gen_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (gen_keys.includes(values[row]) && gen_keys.includes(values[row + 1])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[0], newObj)
+        const val_keys = const_fields.gen_info_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[0], converted_data)
       }
       //setting promoter information 
       if (key === main_fields[1]) {
-        let newObj = {}
-        const prom_keys = const_fields.prom_info_keys
-        const curr_key = Object.keys(values[0])[0]
-        for (let row = 0; row < values.length; row++) {
-          if (prom_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !prom_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (prom_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && prom_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && prom_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[1], newObj)
+        const val_keys = const_fields.prom_info_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[1], converted_data)
       }
       //setting address details. 
       if (key === main_fields[2]) {
-        let newObj = {}
-        const addr_keys = const_fields.address_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (addr_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !addr_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (addr_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && addr_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && addr_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[2], newObj)
+        const val_keys = const_fields.address_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[2], converted_data)
       }
       // setting organization contact details.
       if (key === main_fields[3]) {
-        let newObj = {}
-        const org_cont_keys = const_fields.org_cont_details_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (org_cont_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !org_cont_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (org_cont_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && org_cont_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && org_cont_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[3], newObj)
+        const val_keys = const_fields.org_cont_details_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[3], converted_data)
       }
       //setting past experience details.
       if (key === main_fields[4]) {
-        let ext_keys = Object.values(values[0])
-        let ext_values = []
-        let final_data = []
-        for (let rows = 1; rows < values.length; rows++) {
-          ext_values.push(Object.values(values[rows]))
-        }
-
-        for (let val = 0; val < ext_values.length; val++) {
-          let newObj = {};
-          for (let key = 0; key < ext_keys.length; key++) {
-            newObj[ext_keys[key]] = ext_values[val][key]
-          }
-          final_data.push(newObj)
-        }
-        proper_data.set(main_fields[4], final_data)
+        const result = this.excelConvertRowsAndColumnsToArray(values)
+        proper_data.set(main_fields[4], result)
       }
       //setting members details.
       if (key === main_fields[5]) {
-        let ext_keys = Object.values(values[0])
-        let ext_values = []
-        let final_data = []
-        for (let rows = 1; rows < values.length; rows++) {
-          ext_values.push(Object.values(values[rows]))
-        }
-
-        for (let val = 0; val < ext_values.length; val++) {
-          let newObj = {};
-          for (let key = 0; key < ext_keys.length; key++) {
-            newObj[ext_keys[key]] = ext_values[val][key]
-          }
-          final_data.push(newObj)
-        }
-        proper_data.set(main_fields[5], final_data)
+        const result = this.excelConvertRowsAndColumnsToArray(values)
+        proper_data.set(main_fields[5], result)
       }
       //setting project information
       if (key === main_fields[6]) {
@@ -156,63 +76,21 @@ class PropertyServices {
       }
       // setting land details
       if (key === main_fields[7]) {
-        let newObj = {}
-        const land_keys = const_fields.land_details_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (land_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !land_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (land_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && land_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && land_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[7], newObj)
+        const val_keys = const_fields.land_details_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[7], converted_data)
       }
       // setting built up information.
       if (key === main_fields[8]) {
-        let newObj = {}
-        const built_up_keys = const_fields.build_up_details_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (built_up_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !built_up_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (built_up_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && built_up_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && built_up_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[8], newObj)
+        const val_keys = const_fields.build_up_details_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[8], converted_data)
       }
       //setting address information.
       if (key === main_fields[9]) {
-        let newObj = {}
-        const addr_keys = const_fields.address_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (addr_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !addr_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (addr_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && addr_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && addr_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[9], newObj)
+        const val_keys = const_fields.address_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[9], converted_data)
       }
       //setting promoter details.
       if (key === main_fields[10]) {
@@ -234,34 +112,12 @@ class PropertyServices {
       }
       // setting project details.
       if (key === main_fields[11]) {
-        const ext_data = []
-        let result = []
-        for (let data in values) {
-          ext_data.push(Object.values(values[data]))
-        }
-        for (let row = 1; row < ext_data.length; row++) {
-          let newObj = {}
-          for (let data = 0; data < ext_data[row].length; data++) {
-            newObj[ext_data[0][data]] = ext_data[row][data]
-          }
-          result.push(newObj)
-        }
+        const result = this.excelConvertRowsAndColumnsToArray(values)
         proper_data.set(main_fields[11], result)
       }
       //setting development work details.
       if (key === main_fields[12]) {
-        const ext_data = []
-        let result = []
-        for (let data in values) {
-          ext_data.push(Object.values(values[data]))
-        }
-        for (let row = 1; row < ext_data.length; row++) {
-          let newObj = {}
-          for (let data = 0; data < ext_data[row].length; data++) {
-            newObj[ext_data[0][data]] = ext_data[row][data]
-          }
-          result.push(newObj)
-        }
+        const result = this.excelConvertRowsAndColumnsToArray(values)
         proper_data.set(main_fields[12], result)
       }
       //setting building information
@@ -316,114 +172,40 @@ class PropertyServices {
       }
       // setting project professionals info.
       if (key === main_fields[14]) {
-        let ext_keys = Object.values(values[0])
-        let ext_values = []
-        let final_data = []
-        for (let rows = 1; rows < values.length; rows++) {
-          ext_values.push(Object.values(values[rows]))
-        }
-
-        for (let val = 0; val < ext_values.length; val++) {
-          let newObj = {};
-          for (let key = 0; key < ext_keys.length; key++) {
-            newObj[ext_keys[key]] = ext_values[val][key]
-          }
-          final_data.push(newObj)
-        }
-        proper_data.set(main_fields[14], final_data)
+        const result = this.excelConvertRowsAndColumnsToArray(values)
+        proper_data.set(main_fields[14], result)
       }
       //setting uploaded doc info.
       if (key === main_fields[15]) {
-        let ext_keys = Object.values(values[0])
-        let ext_values = []
-        let final_data = []
-        for (let rows = 1; rows < values.length; rows++) {
-          ext_values.push(Object.values(values[rows]))
-        }
-
-        for (let val = 0; val < ext_values.length; val++) {
-          let newObj = {};
-          for (let key = 0; key < ext_keys.length; key++) {
-            newObj[ext_keys[key]] = ext_values[val][key]
-          }
-          final_data.push(newObj)
-        }
-        proper_data.set(main_fields[15], final_data)
+        const result = this.excelConvertRowsAndColumnsToArray(values)
+        proper_data.set(main_fields[15], result)
       }
       //setting Promoter Information - Individual 
       if (key === main_fields[16]) {
-        let newObj = {}
-        const prom_keys = const_fields.prom_info_keys
-        const curr_key = Object.keys(values[0])[0]
-        for (let row = 0; row < values.length; row++) {
-          if (prom_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !prom_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (prom_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && prom_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && prom_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[16], newObj)
+        const val_keys = const_fields.prom_info_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[16], converted_data)
       }
       //setting Address For Official Communication. 
       if (key === main_fields[17]) {
-        let newObj = {}
-        const addr_keys = const_fields.address_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (addr_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !addr_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (addr_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && addr_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && addr_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[17], newObj)
+        const val_keys = const_fields.address_keys
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[17], converted_data)
       }
       // setting Contact Details.
       if (key === main_fields[18]) {
-        let newObj = {}
-        const org_cont_keys = const_fields.org_cont_details_keys
-        const curr_key = Object.keys(values[0])[0]
-
-        for (let row = 0; row < values.length; row++) {
-          if (org_cont_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !org_cont_keys.includes(values[row + 1][curr_key])) {
-            newObj[values[row][curr_key]] = values[row + 1][curr_key]
-          }
-          if (org_cont_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && org_cont_keys.includes(values[row + 1][curr_key])) {
-            const curr_key = Object.keys(values[0])[0]
-            newObj[values[row][curr_key]] = ''
-          }
-          if (values[row + 1] === undefined && org_cont_keys.includes(values[row][curr_key])) {
-            newObj[values[row][curr_key]] = ''
-          }
-        }
-        proper_data.set(main_fields[18], newObj)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        proper_data.set(main_fields[18], converted_data)
       }
       //setting Other Organization Type Member Information
       if (key === main_fields[19]) {
-        const ext_data = []
-        let result = []
-        for (let data in values) {
-          ext_data.push(Object.values(values[data]))
-        }
-        for (let row = 1; row < ext_data.length; row++) {
-          let newObj = {}
-          for (let data = 0; data < ext_data[row].length; data++) {
-            newObj[ext_data[0][data]] = ext_data[row][data]
-          }
-          result.push(newObj)
-        }
+        const result = this.excelConvertRowsAndColumnsToArray(values)
         proper_data.set(main_fields[19], result)
+      }
+      //setting plot details
+      if (key === main_fields[20]) {
+        const result = this.excelConvertRowsAndColumnsToArray(values)
+        proper_data.set(main_fields[20], result)
       }
     }
   }
@@ -500,6 +282,37 @@ class PropertyServices {
     await this.getAllPropertyDetails(xlData, res)
 
     return ({ 'data': res })
+  }
+   excelConvertLineByLineToObj(val_keys,curr_key,values){
+    let newObj = {}
+    for (let row = 0; row < values.length; row++) {
+      if (val_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !val_keys.includes(values[row + 1][curr_key])) {
+        newObj[values[row][curr_key]] = values[row + 1][curr_key]
+      }
+      if (val_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && val_keys.includes(values[row + 1][curr_key])) {
+        const curr_key = Object.keys(values[0])[0]
+        newObj[values[row][curr_key]] = ''
+      }
+      if (values[row + 1] === undefined && val_keys.includes(values[row][curr_key])) {
+        newObj[values[row][curr_key]] = ''
+      }
+    }
+    return newObj
+  }
+  excelConvertRowsAndColumnsToArray(values){
+    const ext_data = []
+    let result = []
+    for (let data in values) {
+      ext_data.push(Object.values(values[data]))
+    }
+    for (let row = 1; row < ext_data.length; row++) {
+      let newObj = {}
+      for (let data = 0; data < ext_data[row].length; data++) {
+        newObj[ext_data[0][data]] = ext_data[row][data]
+      }
+      result.push(newObj)
+    }
+    return result
   }
 
 }
