@@ -8,7 +8,7 @@ const main_fields = [
     'Project Information',
     'Land Details', 
     'Built-Up Area Details',
-    'Address Details',
+    'Project address details',
     'Promoter(Land Owner/ Investor) Details',
     'Project Details',
     'Development Work',
@@ -17,7 +17,8 @@ const main_fields = [
     'Uploaded Documents',
     'Promoter Information - Individual', 
     'Address For Official Communication',
-    'Contact Details'
+    'Contact Details',
+    'Other Organization Type Member Information'
 ]
 const parent_keys = [
     'Sr.No.',

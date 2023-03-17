@@ -409,6 +409,22 @@ class PropertyServices {
         }
         proper_data.set(main_fields[18], newObj)
       }
+      //setting Other Organization Type Member Information
+      if (key === main_fields[19]) {
+        const ext_data = []
+        let result = []
+        for (let data in values) {
+          ext_data.push(Object.values(values[data]))
+        }
+        for (let row = 1; row < ext_data.length; row++) {
+          let newObj = {}
+          for (let data = 0; data < ext_data[row].length; data++) {
+            newObj[ext_data[0][data]] = ext_data[row][data]
+          }
+          result.push(newObj)
+        }
+        proper_data.set(main_fields[19], result)
+      }
     }
   }
   async getAllPropertyDetails(xlData, tracks_data) {
@@ -427,7 +443,20 @@ class PropertyServices {
       // if already present store then add data in it else create new store key in Map.
       if (current_key !== xlData[row]['TelanganaRERA Application']) {
         if (dataMap.has(current_key)) {
+        if(current_key !== main_fields[2]){
           dataMap.set(current_key, [...dataMap.get(current_key), xlData[row]])
+        }
+          if(current_key === main_fields[2]){
+            if(row < 50){
+              dataMap.set(current_key, [...dataMap.get(current_key), xlData[row]])
+            }else{
+              if(dataMap.has('Project address details')){
+                dataMap.set('Project address details', [...dataMap.get('Project address details'), xlData[row]])
+              }else{
+                dataMap.set('Project address details', [xlData[row]])
+              }
+            }
+          }
         } else {
           dataMap.set(current_key, [xlData[row]])
         }
