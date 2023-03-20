@@ -194,6 +194,7 @@ class PropertyServices {
       }
       // setting Contact Details.
       if (key === main_fields[18]) {
+        const val_keys = const_fields.contact_details_keys
         const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
         proper_data.set(main_fields[18], converted_data)
       }
