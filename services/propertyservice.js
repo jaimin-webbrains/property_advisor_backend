@@ -262,6 +262,7 @@ class PropertyServices {
     response['tracks_details'] = tracks_data.id
     const propertySchema = new PropertySchema(response)
     const res_data = await propertySchema.save()
+    proper_data.clear()
     return ({ 'data': res_data })
   }
   async addAllTsData(req, xlData) {
