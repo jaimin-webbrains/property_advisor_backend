@@ -99,7 +99,7 @@ class PropertyController {
     }
 
     async getAllProperties(req, res) {
-        const page = req.body.page ? req.body.page : 1
+        const page = req.query && req.query.page ? req.query.page : 1
         // const response = await PropertySchema.find({}).populate('tracks_details')
         const response = await PropertySchema.aggregate([
             {
