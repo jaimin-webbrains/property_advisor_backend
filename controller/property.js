@@ -36,21 +36,6 @@ class PropertyController {
             res.status(500).send("Something went wrong");
         }
     }
-
-    async addFile(req, res) {
-        try {
-            const response = await propertyservice.getAllPropertyDetails(req)
-            res.status(201).send({
-                success: true,
-                message: 'Date imported from excel successfully.',
-                data: response
-            })
-        } catch (error) {
-            res.status(500).send("Something went wrong");
-
-        }
-    }
-
     async addAllTsData(req, res) {
         try {
             const is_existing_details_file = await TsSchema.find({ 'reraNumber': req.body.reraNumber, 'detailsFileName': path.resolve() + '/uploads/' + req.files.detailsFileName[0].filename })
