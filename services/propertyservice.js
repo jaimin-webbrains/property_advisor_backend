@@ -60,7 +60,7 @@ class PropertyServices {
         for (let row = 0; row < values.length; row++) {
           if (proj_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !proj_keys.includes(values[row + 1][curr_key])) {
             newObj[values[row][curr_key]] = values[row + 1][curr_key]
-            if (values[row][curr_key] === 'Approved Date' || values[row][curr_key] === 'Proposed Date of Completion' ||  values[row][curr_key] === 'Revised Proposed Date of Completion') {
+            if (values[row][curr_key] === 'Approved Date' || values[row][curr_key] === 'Proposed Date of Completion' ||  values[row][curr_key] === 'Revised Proposed Date of Completion' ||  values[row][curr_key] === 'Complition Date at the time of Registration in Telangana Rera') {
               newObj[values[row][curr_key]] = ExcelSerialDateToJSDate((values[row + 1][curr_key])+1)
             }
           }
@@ -207,6 +207,11 @@ class PropertyServices {
       if (key === main_fields[20]) {
         const result = this.excelConvertRowsAndColumnsToArray(values)
         proper_data.set(main_fields[20], result)
+      }
+      //setting Litigations Details
+      if (key === main_fields[21]) {
+        const result = this.excelConvertRowsAndColumnsToArray(values)
+        proper_data.set(main_fields[21], result)
       }
     }
   }

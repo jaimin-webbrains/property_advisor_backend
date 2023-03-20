@@ -61,13 +61,13 @@ class PropertyController {
                 const workbook = XLSX.readFile(path.resolve() + '/uploads/' + req.files.detailsFileName[0].filename);
                 const sheet_name_list = workbook.SheetNames;
                 const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
-                if(xlData[0]['TelanganaRERA Application'] === undefined){
-                   return res.status(400).send({
-                    success: false,
-                    message: 'File has invalid data!.',
-                })
+                if (xlData[0]['TelanganaRERA Application'] === undefined) {
+                    return res.status(400).send({
+                        success: false,
+                        message: 'File has invalid data!.',
+                    })
                 }
-                const response = await propertyservice.addAllTsData(req,xlData)
+                const response = await propertyservice.addAllTsData(req, xlData)
                 res.status(201).send({
                     success: true,
                     message: 'TS data added successfully.',
@@ -99,7 +99,20 @@ class PropertyController {
     }
 
     async getAllProperties(req, res) {
-        const response = await PropertySchema.find({}).populate('tracks_details')
+        // const response = await PropertySchema.find({}).populate('tracks_details')
+        const response = await PropertySchema.aggregate([
+            {
+                $group: { _id: "$reraNumber", property: { $push: "$$ROOT" } }
+            },
+            {
+                $lookup: {
+                    from: "tracks",
+                    localField: "_id",
+                    foreignField: "reraNumber",
+                    as: "track"
+                }
+            }
+        ])
         res.status(200).send({
             success: true,
             message: 'Data obtained !',

@@ -19,7 +19,8 @@ const main_fields = [
     'Address For Official Communication',
     'Contact Details',
     'Other Organization Type Member Information',
-    'Plot Details'
+    'Plot Details',
+    'Litigations Details'
 ]
 const parent_keys = [
     'Sr.No.',
@@ -93,6 +94,7 @@ const project_info_keys = [
     'Approved Date', 
     'Proposed Date of Completion', 
     'Revised Proposed Date of Completion',
+    'Complition Date at the time of Registration in Telangana Rera',
     'Litigations related to the project ?', 
     'Project Type',
     'Are there any Promoter(Land Owner/ Investor) (as defined by Telangana RERA Order) in the project ?'
