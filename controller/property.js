@@ -99,10 +99,13 @@ class PropertyController {
     }
 
     async getAllProperties(req, res) {
+        const page = req.body.page ? req.body.page : 1
         // const response = await PropertySchema.find({}).populate('tracks_details')
         const response = await PropertySchema.aggregate([
             {
-                $group: { _id: "$reraNumber", property: { $push: "$$ROOT" } }
+                $group: { 
+                    _id: "$reraNumber", 
+                    property: { $push: "$$ROOT" } }
             },
             {
                 $lookup: {
@@ -110,6 +113,27 @@ class PropertyController {
                     localField: "_id",
                     foreignField: "reraNumber",
                     as: "track"
+                }
+            },
+            {
+                $facet: {
+                    metadata: [
+                        {
+                             $count: "total" 
+                        }, 
+                        { $addFields: { 
+                            page: parseInt(page) 
+                            } 
+                        }
+                    ],
+                    data: [
+                        { 
+                            $skip: (page - 1) * 10 
+                        }, 
+                        { 
+                            $limit: 10 
+                        }
+                    ]
                 }
             }
         ])
