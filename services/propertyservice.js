@@ -1,7 +1,4 @@
 const path = require('path')
-
-const PropertySchema = require('../models/propertyschema');
-const TsSchema = require('../models/tsSchema');
 const const_fields = require('../Helper/constants');
 const { ExcelSerialDateToJSDate } = require('../Helper/helper');
 
@@ -260,12 +257,10 @@ class PropertyServices {
     let response = Object.fromEntries(proper_data)
     response['reraNumber'] = tracks_data.reraNumber
     response['tracks_details'] = tracks_data.id
-    const propertySchema = new PropertySchema(response)
-    const res_data = await propertySchema.save()
     proper_data.clear()
-    return ({ 'data': res_data })
+    return ({ 'data': response })
   }
-  async addAllTsData(req, xlData) {
+  async convertToTsPayload(req) {
     const files = req.files
     const body = req.body
     const certExt = files.certExtFileName && files.certExtFileName[0] ? path.resolve() + '/uploads/' + files.certExtFileName[0].filename : ''
@@ -283,12 +278,7 @@ class PropertyServices {
       detailsFileName: path.resolve() + '/uploads/' + files.detailsFileName[0].filename,
       paId : body.paId
     }
-    const tsSchema = new TsSchema(payload)
-    const res = await tsSchema.save()
-    //extracting data from excel
-    await this.getAllPropertyDetails(xlData, res)
-
-    return ({ 'data': res })
+    return ({ 'payLoad': payload })
   }
    excelConvertLineByLineToObj(val_keys,curr_key,values){
     let newObj = {}

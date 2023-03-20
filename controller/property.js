@@ -67,11 +67,17 @@ class PropertyController {
                         message: 'File has invalid data!.',
                     })
                 }
-                const response = await propertyservice.addAllTsData(req, xlData)
+                const response = await propertyservice.convertToTsPayload(req)
+                const tsSchema = new TsSchema(response.payLoad)
+                const resp_data = await tsSchema.save()
+                const excel_data = await propertyservice.getAllPropertyDetails(xlData, resp_data)
+                const propertySchema = new PropertySchema(excel_data.data)
+                const res_data = await propertySchema.save()
                 res.status(201).send({
                     success: true,
                     message: 'TS data added successfully.',
-                    data: response
+                    track_data: resp_data,
+                    property_data : res_data
                 })
             }
         }
