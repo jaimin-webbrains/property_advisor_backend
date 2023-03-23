@@ -26,9 +26,8 @@ const tsSchema = new mongoose.Schema({
         required: true
     },
     paId :{
-        type:Number,
-        required: true
-    }
+        type:Number  
+      }
 });
 
 const TsSchema = mongoose.model("tracks", tsSchema);

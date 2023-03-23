@@ -3,19 +3,22 @@ const StateSchema = require('../models/stateSchema')
 const TsSchema = require('../models/tsSchema')
 const XLSX = require('xlsx');
 const propertyservice = require('../services/propertyservice')
-const path = require('path')
+const path = require('path');
+const propertyFieldHistorySchema = require('../models/propertyFieldHistory');
+const responseHandler = require('../Helper/responseHandler')
+
 
 
 class PropertyController {
     constructor() { }
 
     async getAllStates(req, res) {
-        const response = await StateSchema.find({})
-        res.status(200).send({
-            success: true,
-            message: 'States obtained !',
-            data: response
-        })
+        try {
+            const response = await StateSchema.find({})
+            return responseHandler.successResponse(res, 200, 'States obtained!', response)
+        } catch (error) {
+            return responseHandler.errorResponse(res, 500, error.message)
+        }
     }
 
     async addStates(req, res) {
@@ -24,46 +27,85 @@ class PropertyController {
             if (req_data !== undefined && req_data !== "") {
                 const stateSchema = new StateSchema({ state_name: req_data })
                 const response = await stateSchema.save()
-                res.status(201).send({
-                    success: true,
-                    message: 'State added !.',
-                    data: response
-                })
+                return responseHandler.successResponse(res, 201, 'State added !.', response)
             } else {
-                res.status(400).send("City name is required!");
+                return responseHandler.errorResponse(res, 400, "State name is required!")
             }
         } catch (error) {
-            res.status(500).send("Something went wrong");
+            return responseHandler.errorResponse(res, 500, error.message)
         }
     }
     async addAllTsData(req, res) {
         try {
+            //checking if data already present with same reraNumber and lastModifiedDate.
             const is_existing_details_file = await TsSchema.find({ 'reraNumber': req.body.reraNumber, 'detailsFileName': path.resolve() + '/uploads/' + req.files.detailsFileName[0].filename })
             if (is_existing_details_file.length > 0) {
-                return res.status(400).send({ message: `File already exist with rera no: ${req.body.reraNumber} and this modified date.` });
+                return responseHandler.errorResponse(res, 400, `File already exist with rera no: ${req.body.reraNumber} and this modified date.`)
             }
             else {
+                //checking is already exist with same reraNumber.
+                const isPresentWithSameReraNumber = await TsSchema.find({ 'reraNumber': req.body.reraNumber }).sort({ lastModifiedDate: -1 })
+                if(isPresentWithSameReraNumber.length > 0){
+                    if(new Date(isPresentWithSameReraNumber[0]['_doc']['lastModifiedDate']) > new Date(req.body.lastModifiedDate)){
+                        return responseHandler.errorResponse(res, 400, `Please choose greater date than previous last modified date!.`)
+                    }
+                }
+                //reading excel from specified path.
                 const workbook = XLSX.readFile(path.resolve() + '/uploads/' + req.files.detailsFileName[0].filename);
+
+                //taking th sheet.
                 const sheet_name_list = workbook.SheetNames;
+
+                //converting sheet to json.
                 const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
                 if (xlData[0]['TelanganaRERA Application'] === undefined) {
-                    return res.status(400).send({
-                        success: false,
-                        message: 'File has invalid data!.',
-                    })
+                    return responseHandler.errorResponse(res, 400, 'File has invalid data!.')
                 }
+
+                //converting req body data to tracks data payload.
                 const response = await propertyservice.convertToTsPayload(req)
+
                 const tsSchema = new TsSchema(response.payLoad)
+
+                //saving track data to tracksSchema.
                 const resp_data = await tsSchema.save()
+
+                //converting excel json data to required format as per schema.
                 const excel_data = await propertyservice.getAllPropertyDetails(xlData, resp_data)
                 const propertySchema = new PropertySchema(excel_data.data)
+
+                //saving property data to propertySchema.
                 const res_data = await propertySchema.save()
-                res.status(201).send({
-                    success: true,
-                    message: 'TS data added successfully.',
-                    track_data: resp_data,
-                    property_data : res_data
-                })
+
+                //if the data already present with the same rera number then
+                if (isPresentWithSameReraNumber.length > 0 && isPresentWithSameReraNumber[0].id) {
+
+                    //getting property data from propertySchema by tracks_details fields which is the id of track schema index.
+                    const prev_proprty_data = await PropertySchema.find({ tracks_details: isPresentWithSameReraNumber[0].id })
+                    if (prev_proprty_data.length > 0 && prev_proprty_data[0]['_doc']) {
+
+                        //obtaining the old data by comparing old and new propertySchema details.
+                        const prev_data = propertyservice.getTheNewChanges(res_data['_doc'], prev_proprty_data[0]['_doc'])
+
+                        //obtaining the new data by comparing old and new propertySchema details.
+                        const new_data = propertyservice.getTheNewChanges(prev_proprty_data[0]['_doc'], res_data['_doc'])
+
+                        //saving history to historySchema.
+                        const history = new propertyFieldHistorySchema({
+                            reraNumber: req.body.reraNumber,
+                            lastModifiedDate: req.body.lastModifiedDate,
+                            history: {
+                                prev_data: prev_data,
+                                new_data: new_data,
+                            }
+                        })
+                        await history.save()
+
+                        //deleting the most recently property data ,just before this current data.
+                        await PropertySchema.deleteOne({ '_id': prev_proprty_data[0].id })
+                    }
+                }
+                return responseHandler.successResponse(res, 201, 'TS data added successfully.', { track_data: resp_data, property_data: res_data })
             }
         }
         catch (error) {
@@ -73,66 +115,74 @@ class PropertyController {
                 Object.keys(error.errors).forEach((key) => {
                     errors[key] = error.errors[key].message;
                 });
-
-                return res.status(400).send(errors);
+                return responseHandler.errorResponse(res, 400, errors)
             }
-            res.status(500).send("Something went wrong");
+            return responseHandler.errorResponse(res, 500, error.message)
         }
     }
 
     async getAllTsData(req, res) {
-        const response = await TsSchema.find({})
-        res.status(200).send({
-            success: true,
-            message: 'Data obtained !',
-            data: response
-        })
+        try {
+            const response = await TsSchema.find({})
+            return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+        } catch (error) {
+            return responseHandler.errorResponse(res, 500, error.message)
+        }
     }
 
     async getAllProperties(req, res) {
-        const page = req.query && req.query.page ? req.query.page : 1
-        // const response = await PropertySchema.find({}).populate('tracks_details')
-        const response = await PropertySchema.aggregate([
-            {
-                $group: { 
-                    _id: "$reraNumber", 
-                    property: { $push: "$$ROOT" } }
-            },
-            {
-                $lookup: {
-                    from: "tracks",
-                    localField: "_id",
-                    foreignField: "reraNumber",
-                    as: "track"
+        try {
+            const page = req.query && req.query.page ? req.query.page : 1
+            // getting data from propertySchema and grouping with historySchema by making common reraNumber
+            // adding pagination and sorting by lastModifiedDate(descending) and removed unnecessary data from response.
+            const response = await PropertySchema.aggregate([
+                {
+                    $lookup: {
+                        from: "property_field_histories",
+                        as: "history",
+                        let: { i: "$reraNumber" },
+                        pipeline: [
+                            { $match: { $expr: { $eq: ["$reraNumber", "$$i"] } } },
+                            { $project: { _id: 0, reraNumber: 0, __v: 0 } },
+                            { $sort: { lastModifiedDate: -1 } }
+                        ]
+                    }
+                },
+                { $project: { __v: 0 } },
+                {
+                    $facet: {
+                        metadata: [
+                            { $count: "total" },
+                            {
+                                $addFields: {
+                                    page: parseInt(page)
+                                }
+                            }
+                        ],
+                        data: [
+                            { $skip: (page - 1) * 10 },
+                            { $limit: 10 }
+                        ]
+                    }
                 }
-            },
-            {
-                $facet: {
-                    metadata: [
-                        {
-                             $count: "total" 
-                        }, 
-                        { $addFields: { 
-                            page: parseInt(page) 
-                            } 
-                        }
-                    ],
-                    data: [
-                        { 
-                            $skip: (page - 1) * 10 
-                        }, 
-                        { 
-                            $limit: 10 
-                        }
-                    ]
-                }
-            }
-        ])
-        res.status(200).send({
-            success: true,
-            message: 'Data obtained !',
-            data: response
-        })
+            ])
+            return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+        } catch (error) {
+            return responseHandler.errorResponse(res, 500, error.message)
+        }
+    }
+    async getPropertyByReraNumberOrPaId(req, res) {
+        try {
+            const num = req.query.num
+            const response = await TsSchema.aggregate([
+                { $match: { $or: [{ reraNumber: num }, { paId: parseInt(num) }] } },
+                { $sort: { lastModifiedDate: -1 } }
+
+            ]);
+            return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+        } catch (error) {
+            return responseHandler.errorResponse(res, 500, error.message)
+        }
     }
 }
 

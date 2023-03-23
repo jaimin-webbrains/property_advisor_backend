@@ -1,6 +1,8 @@
 const path = require('path')
 const const_fields = require('../Helper/constants');
 const { ExcelSerialDateToJSDate } = require('../Helper/helper');
+const _ = require('lodash');
+
 
 
 const main_fields = const_fields.main_fields
@@ -17,25 +19,25 @@ class PropertyServices {
       //setting general information
       if (key === main_fields[0]) {
         const val_keys = const_fields.gen_info_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[0], converted_data)
       }
       //setting promoter information 
       if (key === main_fields[1]) {
         const val_keys = const_fields.prom_info_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[1], converted_data)
       }
       //setting address details. 
       if (key === main_fields[2]) {
         const val_keys = const_fields.address_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[2], converted_data)
       }
       // setting organization contact details.
       if (key === main_fields[3]) {
         const val_keys = const_fields.org_cont_details_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[3], converted_data)
       }
       //setting past experience details.
@@ -57,8 +59,8 @@ class PropertyServices {
         for (let row = 0; row < values.length; row++) {
           if (proj_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !proj_keys.includes(values[row + 1][curr_key])) {
             newObj[values[row][curr_key]] = values[row + 1][curr_key]
-            if (values[row][curr_key] === 'Approved Date' || values[row][curr_key] === 'Proposed Date of Completion' ||  values[row][curr_key] === 'Revised Proposed Date of Completion' ||  values[row][curr_key] === 'Complition Date at the time of Registration in Telangana Rera') {
-              newObj[values[row][curr_key]] = ExcelSerialDateToJSDate((values[row + 1][curr_key])+1)
+            if (values[row][curr_key] === 'Approved Date' || values[row][curr_key] === 'Proposed Date of Completion' || values[row][curr_key] === 'Revised Proposed Date of Completion' || values[row][curr_key] === 'Complition Date at the time of Registration in Telangana Rera') {
+              newObj[values[row][curr_key]] = ExcelSerialDateToJSDate((values[row + 1][curr_key]) + 1)
             }
           }
           if (proj_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && proj_keys.includes(values[row + 1][curr_key])) {
@@ -74,19 +76,19 @@ class PropertyServices {
       // setting land details
       if (key === main_fields[7]) {
         const val_keys = const_fields.land_details_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[7], converted_data)
       }
       // setting built up information.
       if (key === main_fields[8]) {
         const val_keys = const_fields.build_up_details_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[8], converted_data)
       }
       //setting address information.
       if (key === main_fields[9]) {
         const val_keys = const_fields.address_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[9], converted_data)
       }
       //setting promoter details.
@@ -144,9 +146,17 @@ class PropertyServices {
             for (let k_name = 0; k_name < child_keys.length; k_name++) {
               if (ext_data[row][2] !== 'Sr.No.') {
                 obj[child_keys[k_name]] = ext_data[row][k_name + 2]
+                if (child_keys[k_name] === 'Mortgage Area') {
+                  if (ext_data[row][k_name + 2] === 0) {
+                    obj[child_keys[k_name]] = false
+                  }
+                  if (ext_data[row][k_name + 2] === 1) {
+                    obj[child_keys[k_name]] = true
+                  }
+                }
               }
             }
-            if(Object.keys(obj).length > 0){
+            if (Object.keys(obj).length > 0) {
               result[result.length - 1]['floor_details'] = [...result[result.length - 1]['floor_details'], obj]
             }
           }
@@ -160,7 +170,7 @@ class PropertyServices {
                 obj[grand_child_keys[k_name]] = ext_data[row][k_name + 2]
               }
             }
-            if(Object.keys(obj).length > 0){
+            if (Object.keys(obj).length > 0) {
               result[result.length - 1]['task_details'] = [...result[result.length - 1]['task_details'], obj]
             }
           }
@@ -180,19 +190,19 @@ class PropertyServices {
       //setting Promoter Information - Individual 
       if (key === main_fields[16]) {
         const val_keys = const_fields.prom_info_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[16], converted_data)
       }
       //setting Address For Official Communication. 
       if (key === main_fields[17]) {
         const val_keys = const_fields.address_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[17], converted_data)
       }
       // setting Contact Details.
       if (key === main_fields[18]) {
         const val_keys = const_fields.contact_details_keys
-        const converted_data = this.excelConvertLineByLineToObj(val_keys,curr_key,values)
+        const converted_data = this.excelConvertLineByLineToObj(val_keys, curr_key, values)
         proper_data.set(main_fields[18], converted_data)
       }
       //setting Other Organization Type Member Information
@@ -228,16 +238,18 @@ class PropertyServices {
       // if already present store then add data in it else create new store key in Map.
       if (current_key !== xlData[row]['TelanganaRERA Application']) {
         if (dataMap.has(current_key)) {
-        if(current_key !== main_fields[2]){
-          dataMap.set(current_key, [...dataMap.get(current_key), xlData[row]])
-        }
-          if(current_key === main_fields[2]){
-            if(row < 50){
+          if (current_key !== main_fields[2]) {
+            dataMap.set(current_key, [...dataMap.get(current_key), xlData[row]])
+          }
+          if (current_key === main_fields[2]) {
+            //there are two address details in some excel which has same key name.(address details)
+            //categorizing it on the basis of row value and renaming to second one.
+            if (row < 50) {
               dataMap.set(current_key, [...dataMap.get(current_key), xlData[row]])
-            }else{
-              if(dataMap.has('Project address details')){
+            } else {
+              if (dataMap.has('Project address details')) {
                 dataMap.set('Project address details', [...dataMap.get('Project address details'), xlData[row]])
-              }else{
+              } else {
                 dataMap.set('Project address details', [xlData[row]])
               }
             }
@@ -276,11 +288,11 @@ class PropertyServices {
       certFileName: path.resolve() + '/uploads/' + files.certFileName[0].filename,
       certExtFileName: certExt,
       detailsFileName: path.resolve() + '/uploads/' + files.detailsFileName[0].filename,
-      paId : body.paId
+      paId: body.paId
     }
     return ({ 'payLoad': payload })
   }
-   excelConvertLineByLineToObj(val_keys,curr_key,values){
+  excelConvertLineByLineToObj(val_keys, curr_key, values) {
     let newObj = {}
     for (let row = 0; row < values.length; row++) {
       if (val_keys.includes(values[row][curr_key]) && values[row + 1] !== undefined && !val_keys.includes(values[row + 1][curr_key])) {
@@ -296,7 +308,7 @@ class PropertyServices {
     }
     return newObj
   }
-  excelConvertRowsAndColumnsToArray(values){
+  excelConvertRowsAndColumnsToArray(values) {
     const ext_data = []
     let result = []
     for (let data in values) {
@@ -311,7 +323,58 @@ class PropertyServices {
     }
     return result
   }
+  getTheNewChanges(prev_record, new_record) {
+    //getting the difference between two json objects by using lodash.
+    let difference = this.differenceObjectDeep(
+      prev_record,
+      new_record
+    );
 
+    //cleaning the objects which has no key and values.
+    const clean_un_necessary_data = this.clean(difference)
+
+    //removing unwanted data. and storing to a object and return it.
+    const filtered_data = Object.keys(clean_un_necessary_data).filter((key) => (key !== '_id') && (key !== 'tracks_details'))
+      .reduce((obj, key) => {
+        return Object.assign(obj, {
+          [key]: clean_un_necessary_data[key]
+        });
+      }, {});
+    return filtered_data
+  }
+
+  differenceObjectDeep(source, other) {
+    var self = this;
+    return _.reduce(source, function (result, value, key) {
+      if (_.isObject(value) && _.isObject(other[key])) {
+        result[key] = self.differenceObjectDeep(
+          value,
+          other[key]
+        );
+      } else if (!_.isEqual(value, other[key])) {
+        result[key] = other[key];
+      }
+      return result;
+    }, _.omit(other, _.keys(source)));
+  }
+  clean(object) {
+    var self = this;
+    Object
+      .entries(object)
+      .forEach(([k, v]) => {
+        if (v && typeof v === 'object') {
+          self.clean(v);
+        }
+        if (v && typeof v === 'object' && !Object.keys(v).length || v === null || v === undefined) {
+          if (Array.isArray(object)) {
+            object.splice(k, 1);
+          } else {
+            delete object[k];
+          }
+        }
+      });
+    return object;
+  }
 }
 
 module.exports = new PropertyServices()
