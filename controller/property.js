@@ -4,7 +4,7 @@ const TsSchema = require('../models/tsSchema')
 const XLSX = require('xlsx');
 const propertyservice = require('../services/propertyservice')
 const path = require('path');
-const propertyFieldHistorySchema = require('../models/propertyFieldHistory');
+const propertyFieldHistorySchema = require('../models/propertyFieldHistorySchema');
 const responseHandler = require('../Helper/responseHandler')
 
 
