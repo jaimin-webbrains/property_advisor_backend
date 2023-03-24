@@ -1,11 +1,12 @@
-const mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost:27017/property_advisor", { useNewUrlParser: true })
+const mongoose = require("mongoose");
+require("dotenv").config();
+mongoose.connect(process.env.DATABASE_URL);
 const conn = mongoose.connection;
-conn.on('connected', function () {
-    console.log('database is connected successfully');
+conn.on("connected", function () {
+    console.log("database is connected successfully");
 });
-conn.on('disconnected', function () {
-    console.log('database is disconnected successfully');
-})
-conn.on('error', console.error.bind(console, 'connection error:'));
+conn.on("disconnected", function () {
+    console.log("database is disconnected successfully");
+});
+conn.on("error", console.error.bind(console, "connection error:"));
 module.exports = conn;
