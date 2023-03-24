@@ -184,6 +184,30 @@ class PropertyController {
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }
+    async getAllReraDetails(req, res) {
+        try {
+            const page = req.query && req.query.page ? req.query.page : 1
+            const response = await PropertySchema.find({}).select({
+                'tracks_details':1,
+                'Promoter Information - Organization.Name' : 1,
+                'Project address details.District' : 1,
+                'Project address details.Mandal' : 1,
+                'Project address details.Locality' : 1,
+                'Project address details.Village/City/Town' : 1,
+                'Land Details.Net Area(In sqmts)' : 1, 
+                'Built-Up Area Details' : 1,
+            }).populate('tracks_details',{
+                _id : 0,
+                state : 0,
+                detailsFileName : 0,
+                detailsURL : 0,
+                __v : 0
+            })
+            return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+        } catch (error) {
+            return responseHandler.errorResponse(res, 500, error.message)
+        }
+    }
 }
 
 module.exports = new PropertyController()

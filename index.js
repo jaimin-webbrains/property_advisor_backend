@@ -18,7 +18,7 @@ const corsOpts = {
   allowedHeaders: ['Content-Type',],
 };
 app.use(cors(corsOpts));
-
+app.use(express.static('uploads'))
 app.use('/property', propertyrouter)
 
 
