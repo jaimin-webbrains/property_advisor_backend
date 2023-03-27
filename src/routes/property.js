@@ -34,6 +34,6 @@ propertyrouter.get(
 )
 propertyrouter.get(
     '/get_all_rera_details',
-    property.getAllReraDetails
+    property.getReraDetailsByNumber
 )
 module.exports = propertyrouter;

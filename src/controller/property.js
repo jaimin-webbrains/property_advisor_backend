@@ -20,7 +20,6 @@ class PropertyController {
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }
-
     async addStates(req, res) {
         try {
             let req_data = req.body.state
@@ -45,8 +44,8 @@ class PropertyController {
             else {
                 //checking is already exist with same reraNumber.
                 const isPresentWithSameReraNumber = await TsSchema.find({ 'reraNumber': req.body.reraNumber }).sort({ lastModifiedDate: -1 })
-                if(isPresentWithSameReraNumber.length > 0){
-                    if(new Date(isPresentWithSameReraNumber[0]['_doc']['lastModifiedDate']) > new Date(req.body.lastModifiedDate)){
+                if (isPresentWithSameReraNumber.length > 0) {
+                    if (new Date(isPresentWithSameReraNumber[0]['_doc']['lastModifiedDate']) > new Date(req.body.lastModifiedDate)) {
                         return responseHandler.errorResponse(res, 400, `Please choose greater date than previous last modified date!.`)
                     }
                 }
@@ -120,7 +119,6 @@ class PropertyController {
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }
-
     async getAllTsData(req, res) {
         try {
             const response = await TsSchema.find({})
@@ -129,7 +127,6 @@ class PropertyController {
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }
-
     async getAllProperties(req, res) {
         try {
             const page = req.query && req.query.page ? req.query.page : 1
@@ -184,26 +181,29 @@ class PropertyController {
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }
-    async getAllReraDetails(req, res) {
+    async getReraDetailsByNumber(req, res) {
         try {
-            const page = req.query && req.query.page ? req.query.page : 1
-            const response = await PropertySchema.find({}).select({
-                'tracks_details':1,
-                'Promoter Information - Organization.Name' : 1,
-                'Project address details.District' : 1,
-                'Project address details.Mandal' : 1,
-                'Project address details.Locality' : 1,
-                'Project address details.Village/City/Town' : 1,
-                'Land Details.Net Area(In sqmts)' : 1, 
-                'Built-Up Area Details' : 1,
-            }).populate('tracks_details',{
-                _id : 0,
-                state : 0,
-                detailsFileName : 0,
-                detailsURL : 0,
-                __v : 0
-            })
-            return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+            const reraNumber = req.query.reraNumber
+            if (reraNumber !== "" && reraNumber !== undefined) {
+                const response = await PropertySchema.find({ reraNumber: reraNumber }).select({
+                    'tracks_details': 1,
+                    'Promoter Information - Organization.Name': 1,
+                    'Project address details.District': 1,
+                    'Project address details.Mandal': 1,
+                    'Project address details.Locality': 1,
+                    'Project address details.Village/City/Town': 1,
+                    'Land Details.Net Area(In sqmts)': 1,
+                    'Built-Up Area Details': 1,
+                }).populate('tracks_details', {
+                    _id: 0,
+                    state: 0,
+                    detailsFileName: 0,
+                    detailsURL: 0,
+                    __v: 0
+                })
+                return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+            }
+            return responseHandler.errorResponse(res, 400, 'Rere number is required!!')
         } catch (error) {
             return responseHandler.errorResponse(res, 500, error.message)
         }
