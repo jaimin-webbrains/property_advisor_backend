@@ -232,10 +232,10 @@ class PropertyController {
 
     async updateTrackPaId(req,res){
         const {reraNumber,paId} = req.body
-        if(reraNumber === "" || reraNumber == undefined){
+        if(reraNumber === "" || reraNumber === undefined){
             return responseHandler.errorResponse(res, 400, 'reraNumber is required !!')
         }
-        if(paId == "" || paId === undefined){
+        if(paId === "" || paId === undefined){
             return responseHandler.errorResponse(res, 400, 'PA ID is required !!')
         }
         const payLoad = await TsSchema.findOne({reraNumber:reraNumber}, null, { sort: { lastModifiedDate: -1 } })
