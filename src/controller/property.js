@@ -145,6 +145,14 @@ class PropertyController {
                         ]
                     }
                 },
+                {
+                    $lookup: {
+                        from: 'tracks',
+		 			 	localField: 'tracks_details',
+		 			 	foreignField: '_id',
+		 			 	as : "tracks_details"
+                    }
+                },
                 { $project: { __v: 0 } },
                 {
                     $facet: {
