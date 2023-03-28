@@ -220,10 +220,10 @@ class PropertyController {
         try {
             const reraNumber = req.query.reraNumber
             const response = await PropertySchema.find({reraNumber:reraNumber}).populate('tracks_details')
-            const histories = await propertyFieldHistorySchema.find({reraNumber:reraNumber})
-            if(histories.length > 0){
-                response[0]['_doc']['History'] = histories
-            }
+            // const histories = await propertyFieldHistorySchema.find({reraNumber:reraNumber})
+            // if(histories.length > 0){
+            //     response[0]['_doc']['History'] = histories
+            // }
             return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
         } catch (error) {
             return responseHandler.errorResponse(res, 500, error.message)
