@@ -168,7 +168,7 @@ class PropertyController {
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }
-    async getPropertyByReraNumberOrPaId(req, res) {
+    async getTracksByReraNumberOrPaId(req, res) {
         try {
             const num = req.query.num
             const response = await TsSchema.aggregate([
@@ -207,6 +207,38 @@ class PropertyController {
         } catch (error) {
             return responseHandler.errorResponse(res, 500, error.message)
         }
+    }
+    async getPropertyDetailsByReraNumber(req,res) {
+        try {
+            const reraNumber = req.query.reraNumber
+            const response = await PropertySchema.find({reraNumber:reraNumber}).populate('tracks_details')
+            const histories = await propertyFieldHistorySchema.find({reraNumber:reraNumber})
+            if(histories.length > 0){
+                response[0]['_doc']['History'] = histories
+            }
+            return responseHandler.successResponse(res, 200, 'Data Obtained !', response)
+        } catch (error) {
+            return responseHandler.errorResponse(res, 500, error.message)
+        }
+    }
+
+    async updateTrackPaId(req,res){
+        const {reraNumber,paId} = req.body
+        if(reraNumber === "" || reraNumber == undefined){
+            return responseHandler.errorResponse(res, 400, 'reraNumber is required !!')
+        }
+        if(paId == "" || paId === undefined){
+            return responseHandler.errorResponse(res, 400, 'PA ID is required !!')
+        }
+        const payLoad = await TsSchema.findOne({reraNumber:reraNumber}, null, { sort: { lastModifiedDate: -1 } })
+        if(payLoad){
+            payLoad.paId = paId
+            const response = await payLoad.save()
+            return responseHandler.successResponse(res, 200, 'Data updated !', response)
+        }else{
+            return responseHandler.errorResponse(res, 400, 'No data found by this rera number!!')
+        }
+
     }
 }
 

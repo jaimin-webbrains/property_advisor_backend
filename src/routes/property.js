@@ -29,11 +29,19 @@ propertyrouter.get(
     property.getAllProperties
 )
 propertyrouter.get(
-    '/get_by_rera_number_or_pa_id',
-    property.getPropertyByReraNumberOrPaId
+    '/get_tracks_by_rera_number_or_pa_id',
+    property.getTracksByReraNumberOrPaId
 )
 propertyrouter.get(
-    '/get_all_rera_details',
+    '/get_all_rera_details_by_rera_number',
     property.getReraDetailsByNumber
+)
+propertyrouter.get(
+    '/get_property_details_by_rera_number',
+    property.getPropertyDetailsByReraNumber
+)
+propertyrouter.post(
+    '/update_property_pa_id',
+    property.updateTrackPaId
 )
 module.exports = propertyrouter;
