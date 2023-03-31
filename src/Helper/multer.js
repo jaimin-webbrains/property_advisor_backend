@@ -7,10 +7,14 @@ const storage = multer.diskStorage({
         cb(null, path.resolve() + '/uploads/')
     },
     filename: (req, file, cb) => {
-        if(file.fieldname==="certFileName") tsDataUploadFileType="-C-"
-        if(file.fieldname==="certExtFileName") tsDataUploadFileType="-CE-"
-        if(file.fieldname==="detailsFileName") tsDataUploadFileType="-D-"
-        cb(null, req.body.reraNumber + tsDataUploadFileType + formatter.format(new Date(req.body.lastModifiedDate),'dd-MM-yyyy')+path.extname(file.originalname))
+        if(file.fieldname==="certFileName" || file.fieldname==="certExtFileName" || file.fieldname==="detailsFileName"){
+            if(file.fieldname==="certFileName") tsDataUploadFileType="-C-"
+            if(file.fieldname==="certExtFileName") tsDataUploadFileType="-CE-"
+            if(file.fieldname==="detailsFileName") tsDataUploadFileType="-D-"
+            cb(null, req.body.reraNumber + tsDataUploadFileType + formatter.format(new Date(req.body.lastModifiedDate),'dd-MM-yyyy')+path.extname(file.originalname))
+        }else{
+            cb(null, formatter.format(new Date(),'dd-MM-yyyy')+'-'+file.originalname)
+        }
     }
 });
 exports.upload = multer({ storage: storage });

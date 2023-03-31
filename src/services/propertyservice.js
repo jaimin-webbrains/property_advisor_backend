@@ -2,6 +2,8 @@ const path = require('path')
 const const_fields = require('../Helper/constants');
 const { ExcelSerialDateToJSDate } = require('../Helper/helper');
 const _ = require('lodash');
+require("dotenv").config();
+const axios = require('axios')
 
 
 
@@ -374,6 +376,33 @@ class PropertyServices {
         }
       });
     return object;
+  }
+
+  async postDataToPropertyAdvisor(propertyData, tracksData) {
+    let data = propertyData
+    data['_doc']['tracks_details'] = tracksData
+    data['_doc']['paId'] = tracksData.paId
+    const post_response = await axios.post(process.env.PROPERTY_ADVISOR_URL + '/1trec/test/property_mapping_data', {
+      data: data
+    }).then((res) => res)
+      .catch((e) => e)
+    return post_response
+  }
+  
+  convertToTrackDataFromExcel(data){
+    let payLoad = {}
+    payLoad.certExtFileName = data['Certificate File Name']
+    payLoad.certFileName = data['Certificate File Name']
+    payLoad.detailsFileName = data['Details File Name']
+    payLoad.detailsURL = data['Details URL']
+    payLoad.lastModifiedDate = ExcelSerialDateToJSDate(data['Last Modified Date'])
+    payLoad.projectEndDate = ExcelSerialDateToJSDate(data['Project End Date'])
+    payLoad.reraProjectStartDate = ExcelSerialDateToJSDate(data['RERA Project Start Date'])
+    payLoad.reraApprovedDate = ExcelSerialDateToJSDate(data['RERA Approved Date'])
+    payLoad.reraNumber = data['RERA No']
+    payLoad.paId = data['PA Id']
+
+    return payLoad
   }
 }
 

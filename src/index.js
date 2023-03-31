@@ -17,15 +17,19 @@ const corsOpts = {
     allowedHeaders: ["Content-Type"],
 };
 app.use(cors(corsOpts));
-app.use(express.static("uploads"));
+// app.use(express.static("uploads"));
+app.use("/uploads", express.static(__dirname.replace("/src", "") + "/uploads"));
 app.use("/property", propertyrouter);
 
-const root = require("path").join(__dirname, "public");
-app.use(express.static(root));
+// const root = require("path").join(__dirname, "public");
+// app.use(express.static(root));
+// app.get("*", (req, res) => {
+//     res.sendFile("index.html", { root });
+// });
+app.use("/", express.static(__dirname.replace("/src", "") + "/public"));
 app.get("*", (req, res) => {
-    res.sendFile("index.html", { root });
+    res.sendFile(path.join(__dirname.replace("/src", ""), "public/index.html"));
 });
-
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

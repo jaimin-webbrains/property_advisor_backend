@@ -44,4 +44,11 @@ propertyrouter.post(
     '/update_property_pa_id',
     property.updateTrackPaId
 )
+propertyrouter.post(
+    '/bulk_add_properties',
+    upload.fields([
+        { name: 'bulkfile', maxCount: 1 },
+    ]),
+    property.bulkAddProperties
+)
 module.exports = propertyrouter;
