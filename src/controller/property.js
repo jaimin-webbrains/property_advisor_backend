@@ -106,7 +106,24 @@ class PropertyController {
                 }
                 if (resp_data.paId !== null) {
                     try {
-                        await propertyservice.postDataToPropertyAdvisor(res_data, resp_data)
+                        const response = await PropertySchema.find({ reraNumber: res_data.reraNumber }).select({
+                            'tracks_details': 1,
+                            '_id' : 0,
+                            'Promoter Information - Organization.Name': 1,
+                            'Project address details.District': 1,
+                            'Project address details.Mandal': 1,
+                            'Project address details.Locality': 1,
+                            'Project address details.Village/City/Town': 1,
+                            'Land Details.Net Area(In sqmts)': 1,
+                            'Built-Up Area Details': 1,
+                        }).populate('tracks_details', {
+                            _id: 0,
+                            state: 0,
+                            detailsFileName: 0,
+                            detailsURL: 0,
+                            __v: 0
+                        })                        
+                        await propertyservice.postDataToPropertyAdvisor(response)
                     } catch (error) {
                         return responseHandler.errorResponse(res, 500, error.message)
                     }
@@ -254,6 +271,8 @@ class PropertyController {
     }
 
     async bulkAddProperties(req, res) {
+        let cancelledArray = []
+        let total = 0
         try {
             const workbook = XLSX.readFile(path.resolve() + '/uploads/' + req.files.bulkfile[0].filename);
 
@@ -261,90 +280,111 @@ class PropertyController {
             const sheet_name_list = workbook.SheetNames;
 
             //converting sheet to json.
-            const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
-            if (xlData.length > 0) {
-                for(let row in xlData){
-                    const obtained_tracks_data = propertyservice.convertToTrackDataFromExcel(xlData[row])
-                    console.log(obtained_tracks_data)
+            const project_xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
+            total = project_xlData.length
+            if (project_xlData.length > 0) {
+                for (let row in project_xlData) {
+                    try {
+                        const obtained_tracks_data = propertyservice.convertToTrackDataFromExcel(project_xlData[row])
                         //checking if data already present with same reraNumber and lastModifiedDate.
-                         const is_existing_details_file = await TsSchema.find({ 'reraNumber': obtained_tracks_data.reraNumber, 'lastModifiedDate': new Date(obtained_tracks_data.lastModifiedDate) })
+                        const is_existing_details_file = await TsSchema.find({ 'reraNumber': obtained_tracks_data.reraNumber, 'lastModifiedDate': new Date(obtained_tracks_data.lastModifiedDate) })
                         if (is_existing_details_file.length > 0) {
-                             return responseHandler.errorResponse(res, 400, `File already exist with rera no: ${obtained_tracks_data.reraNumber} and this modified date.`)
-                         }
-                        //  else {
-                        //      //checking is already exist with same reraNumber.
-                        //      const isPresentWithSameReraNumber = await TsSchema.find({ 'reraNumber': obtained_tracks_data.reraNumber }).sort({ lastModifiedDate: -1 })
-                        //      if (isPresentWithSameReraNumber.length > 0) {
-                        //         if (new Date(isPresentWithSameReraNumber[0]['_doc']['lastModifiedDate']) > new Date(obtained_tracks_data.lastModifiedDate)) {
-                        //             return responseHandler.errorResponse(res, 400, `Please choose greater date than previous last modified date!.`)
-                        //         }
-                        //     }
-                             //reading excel from specified path.
-                        //     const workbook = XLSX.readFile(path.resolve() + '/uploads/' + req.files.detailsFileName[0].filename);
-            
-                        //     //taking th sheet.
-                        //     const sheet_name_list = workbook.SheetNames;
-            
-                        //     //converting sheet to json.
-                        //     const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
-                        //     if (xlData[0]['TelanganaRERA Application'] === undefined) {
-                        //         return responseHandler.errorResponse(res, 400, 'File has invalid data!.')
-                        //     }
-            
-                        //     //converting req body data to tracks data payload.
-                        //     const response = await propertyservice.convertToTsPayload(req)
-            
-                        //     const tsSchema = new TsSchema(response.payLoad)
-            
-                        //     //saving track data to tracksSchema.
-                        //     const resp_data = await tsSchema.save()
-            
-                        //     //converting excel json data to required format as per schema.
-                        //     const excel_data = await propertyservice.getAllPropertyDetails(xlData, resp_data)
-                        //     const propertySchema = new PropertySchema(excel_data.data)
-            
-                        //     //saving property data to propertySchema.
-                        //     const res_data = await propertySchema.save()
-            
-                        //     //if the data already present with the same rera number then
-                        //     if (isPresentWithSameReraNumber.length > 0 && isPresentWithSameReraNumber[0].id) {
-            
-                        //         //getting property data from propertySchema by tracks_details fields which is the id of track schema index.
-                        //         const prev_proprty_data = await PropertySchema.find({ tracks_details: isPresentWithSameReraNumber[0].id })
-                        //         if (prev_proprty_data.length > 0 && prev_proprty_data[0]['_doc']) {
-            
-                        //             //obtaining the old data by comparing old and new propertySchema details.
-                        //             const prev_data = propertyservice.getTheNewChanges(res_data['_doc'], prev_proprty_data[0]['_doc'])
-            
-                        //             //obtaining the new data by comparing old and new propertySchema details.
-                        //             const new_data = propertyservice.getTheNewChanges(prev_proprty_data[0]['_doc'], res_data['_doc'])
-            
-                        //             //saving history to historySchema.
-                        //             const history = new propertyFieldHistorySchema({
-                        //                 reraNumber: req.body.reraNumber,
-                        //                 lastModifiedDate: req.body.lastModifiedDate,
-                        //                 history: {
-                        //                     prev_data: prev_data,
-                        //                     new_data: new_data,
-                        //                 }
-                        //             })
-                        //             await history.save()
-            
-                        //             //deleting the most recently property data ,just before this current data.
-                        //             await PropertySchema.deleteOne({ '_id': prev_proprty_data[0].id })
-                        //         }
-                        //     }
-                        //     if (resp_data.paId !== null) {
-                        //         try {
-                        //             await propertyservice.postDataToPropertyAdvisor(res_data, resp_data)
-                        //         } catch (error) {
-                        //             return responseHandler.errorResponse(res, 500, error.message)
-                        //         }
-                        //     }
-                        //     return responseHandler.successResponse(res, 201, 'TS data added successfully.', { track_data: resp_data, property_data: res_data })
-                        // }
+                            cancelledArray.push({
+                                reraNumber : project_xlData[row]['RERA No'],
+                                error : `File already exist with rera no: ${obtained_tracks_data.reraNumber} and this modified date.`
+                            })
+                            continue
+                        }
+                        else {
+                            //checking is already exist with same reraNumber.
+                            const isPresentWithSameReraNumber = await TsSchema.find({ 'reraNumber': obtained_tracks_data.reraNumber }).sort({ lastModifiedDate: -1 })
+                            if (isPresentWithSameReraNumber.length > 0) {
+                                if (new Date(isPresentWithSameReraNumber[0]['_doc']['lastModifiedDate']) > new Date(obtained_tracks_data.lastModifiedDate)) {
+                                    cancelledArray.push({
+                                        reraNumber : project_xlData[row]['RERA No'],
+                                        error : `Please choose greater date than previous last modified date!.`
+                                    })
+                                    continue
+                                }
+                            }
+                            //reading excel from specified path.
+                            const workbook = XLSX.readFile(path.resolve() + '/uploads/' + project_xlData[row]['Details File Name'] + '.xlsx')
+
+                            //     //taking th sheet.
+                            const sheet_name_list = workbook.SheetNames;
+
+                            //     //converting sheet to json.
+                            const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
+                            if (xlData[0]['TelanganaRERA Application'] === undefined) {
+                                cancelledArray.push({
+                                    reraNumber : project_xlData[row]['RERA No'],
+                                    error : 'File has invalid data!.'
+                                })
+                                continue
+                            }
+
+                            const tsSchema = new TsSchema(obtained_tracks_data)
+
+                            //saving track data to tracksSchema.
+                            const resp_data = await tsSchema.save()
+
+                            //converting excel json data to required format as per schema.
+                            const excel_data = await propertyservice.getAllPropertyDetails(xlData, resp_data)
+                            const propertySchema = new PropertySchema(excel_data.data)
+
+                            //saving property data to propertySchema.
+                            const res_data = await propertySchema.save()
+
+                            //if the data already present with the same rera number then
+                            if (isPresentWithSameReraNumber.length > 0 && isPresentWithSameReraNumber[0].id) {
+
+                                //getting property data from propertySchema by tracks_details fields which is the id of track schema index.
+                                const prev_proprty_data = await PropertySchema.find({ tracks_details: isPresentWithSameReraNumber[0].id })
+                                if (prev_proprty_data.length > 0 && prev_proprty_data[0]['_doc']) {
+
+                                    //obtaining the old data by comparing old and new propertySchema details.
+                                    const prev_data = propertyservice.getTheNewChanges(res_data['_doc'], prev_proprty_data[0]['_doc'])
+
+                                    //obtaining the new data by comparing old and new propertySchema details.
+                                    const new_data = propertyservice.getTheNewChanges(prev_proprty_data[0]['_doc'], res_data['_doc'])
+
+                                    //saving history to historySchema.
+                                    const history = new propertyFieldHistorySchema({
+                                        reraNumber: req.body.reraNumber,
+                                        lastModifiedDate: req.body.lastModifiedDate,
+                                        history: {
+                                            prev_data: prev_data,
+                                            new_data: new_data,
+                                        }
+                                    })
+                                    await history.save()
+
+                                    //deleting the most recently property data ,just before this current data.
+                                    await PropertySchema.deleteOne({ '_id': prev_proprty_data[0].id })
+                                }
+                            }
+                            if (resp_data.paId !== null) {
+                                try {
+                                    await propertyservice.postDataToPropertyAdvisor(res_data, resp_data)
+                                } catch (error) {
+                                    return responseHandler.errorResponse(res, 500, error.message)
+                                }
+                            }
+                        }
+
+                    } catch (error) {
+                        cancelledArray.push({
+                            reraNumber : project_xlData[row]['RERA No'],
+                            error : error.message
+                        })
+                    }
                 }
-            }else{
+                return responseHandler.successResponse(res, 201, 'TS data added successfully.', {
+                   cancelled_count : cancelledArray.length,
+                   total_properties : total,
+                   uploaded : total-cancelledArray.length,
+                    not_accepted_properties : cancelledArray                })
+            } else {
                 return responseHandler.errorResponse(res, 400, 'File has no data!')
             }
         } catch (error) {

@@ -3,7 +3,8 @@ const const_fields = require('../Helper/constants');
 const { ExcelSerialDateToJSDate } = require('../Helper/helper');
 const _ = require('lodash');
 require("dotenv").config();
-const axios = require('axios')
+const axios = require('axios');
+const { json } = require('express');
 
 
 
@@ -378,29 +379,35 @@ class PropertyServices {
     return object;
   }
 
-  async postDataToPropertyAdvisor(propertyData, tracksData) {
-    let data = propertyData
-    data['_doc']['tracks_details'] = tracksData
-    data['_doc']['paId'] = tracksData.paId
-    const post_response = await axios.post(process.env.PROPERTY_ADVISOR_URL + '/1trec/test/property_mapping_data', {
-      data: data
-    }).then((res) => res)
-      .catch((e) => e)
+  async postDataToPropertyAdvisor(data) {
+    const post_response = await axios.post(process.env.PROPERTY_ADVISOR_DOMAIN_NAME+'/Apis/StaticPagesApi/update_property_data', JSON.stringify(data),{
+      auth: {
+        username: process.env.PROPERTY_ADVISOR_UAT_USERNAME,
+        password: process.env.PROPERTY_ADVISOR_UAT_PASSWORD
+      }
+    }
+  ).then((res) => {
+      console.log(res)
+    })
+      .catch((e) => {
+        console.log(e)
+      })
     return post_response
   }
   
   convertToTrackDataFromExcel(data){
     let payLoad = {}
-    payLoad.certExtFileName = data['Certificate File Name']
-    payLoad.certFileName = data['Certificate File Name']
-    payLoad.detailsFileName = data['Details File Name']
+    payLoad.state = 'Telangana'
+    payLoad.certExtFileName = data['Certificate File Name'] ? path.resolve() + '/uploads/'+ data['Certificate Ext File Name'] : ''
+    payLoad.certFileName = path.resolve() + '/uploads/'+ data['Certificate File Name']
+    payLoad.detailsFileName = path.resolve() + '/uploads/'+ data['Details File Name']
     payLoad.detailsURL = data['Details URL']
-    payLoad.lastModifiedDate = ExcelSerialDateToJSDate(data['Last Modified Date'])
-    payLoad.projectEndDate = ExcelSerialDateToJSDate(data['Project End Date'])
-    payLoad.reraProjectStartDate = ExcelSerialDateToJSDate(data['RERA Project Start Date'])
-    payLoad.reraApprovedDate = ExcelSerialDateToJSDate(data['RERA Approved Date'])
+    payLoad.lastModifiedDate = typeof(data['Last Modified Date']) !== 'string' ? ExcelSerialDateToJSDate(data['Last Modified Date']) : new Date(data['Last Modified Date'].trim())
+    payLoad.projectEndDate = typeof(data['Project End Date']) !== 'string' ? ExcelSerialDateToJSDate(data['Project End Date']) : new Date(data['Project End Date'].trim())
+    payLoad.reraProjectStartDate = typeof(data['RERA Project Start Date']) !== 'string' ? ExcelSerialDateToJSDate(data['RERA Project Start Date']) : new Date(data['RERA Project Start Date'].trim())
+    payLoad.reraApprovedDate = typeof(data['RERA Approved Date']) !== 'string' ? ExcelSerialDateToJSDate(data['RERA Approved Date']) : new Date(data['RERA Approved Date'].trim())
     payLoad.reraNumber = data['RERA No']
-    payLoad.paId = data['PA Id']
+    payLoad.paId = data['PA ID']
 
     return payLoad
   }
