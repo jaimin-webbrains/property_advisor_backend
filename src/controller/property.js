@@ -116,6 +116,7 @@ class PropertyController {
                             'Project address details.Village/City/Town': 1,
                             'Land Details.Net Area(In sqmts)': 1,
                             'Built-Up Area Details': 1,
+                            'Project Information' : 1
                         }).populate('tracks_details', {
                             _id: 0,
                             state: 0,
@@ -226,6 +227,7 @@ class PropertyController {
                     'Project address details.Village/City/Town': 1,
                     'Land Details.Net Area(In sqmts)': 1,
                     'Built-Up Area Details': 1,
+                    'Project Information' : 1
                 }).populate('tracks_details', {
                     _id: 0,
                     state: 0,
