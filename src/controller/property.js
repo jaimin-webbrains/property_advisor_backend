@@ -286,6 +286,10 @@ class PropertyController {
             const project_xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
             total = project_xlData.length
             if (project_xlData.length > 0) {
+                let keys = Object.keys(project_xlData[0])
+                if(keys.indexOf('RERA No') === -1){
+                    return responseHandler.errorResponse(res, 400, 'Invalid file!')
+                }
                 for (let row in project_xlData) {
                     console.log(row)
                     try {
