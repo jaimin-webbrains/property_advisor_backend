@@ -398,7 +398,7 @@ class PropertyServices {
   convertToTrackDataFromExcel(data){
     let payLoad = {}
     payLoad.state = 'Telangana'
-    payLoad.certExtFileName = data['Certificate File Name'] ? path.resolve() + '/uploads/'+ data['Certificate Ext File Name'] : ''
+    payLoad.certExtFileName = data['Certificate Ext File Name'] && data['Certificate Ext File Name'] !== 'NA' && data['Certificate Ext File Name'] !== ""? path.resolve() + '/uploads/'+ data['Certificate Ext File Name'] : ''
     payLoad.certFileName = path.resolve() + '/uploads/'+ data['Certificate File Name']
     payLoad.detailsFileName = path.resolve() + '/uploads/'+ data['Details File Name']
     payLoad.detailsURL = data['Details URL']
