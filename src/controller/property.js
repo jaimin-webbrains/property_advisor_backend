@@ -108,7 +108,7 @@ class PropertyController {
                     try {
                         const response = await PropertySchema.find({ reraNumber: res_data.reraNumber }).select({
                             'tracks_details': 1,
-                            '_id' : 0,
+                            '_id': 0,
                             'Promoter Information - Organization.Name': 1,
                             'Project address details.District': 1,
                             'Project address details.Mandal': 1,
@@ -116,14 +116,14 @@ class PropertyController {
                             'Project address details.Village/City/Town': 1,
                             'Land Details.Net Area(In sqmts)': 1,
                             'Built-Up Area Details': 1,
-                            'Project Information' : 1
+                            'Project Information': 1
                         }).populate('tracks_details', {
                             _id: 0,
                             state: 0,
                             detailsFileName: 0,
                             detailsURL: 0,
                             __v: 0
-                        })                        
+                        })
                         await propertyservice.postDataToPropertyAdvisor(response)
                     } catch (error) {
                         return responseHandler.errorResponse(res, 500, error.message)
@@ -227,7 +227,7 @@ class PropertyController {
                     'Project address details.Village/City/Town': 1,
                     'Land Details.Net Area(In sqmts)': 1,
                     'Built-Up Area Details': 1,
-                    'Project Information' : 1
+                    'Project Information': 1
                 }).populate('tracks_details', {
                     _id: 0,
                     state: 0,
@@ -266,7 +266,7 @@ class PropertyController {
         }
         try {
             await TsSchema.updateMany({ reraNumber: reraNumber }, { paId: paId })
-            return responseHandler.successResponse(res, 200, 'Data Updated !')
+            return responseHandler.successResponse(res, 200, 'Data Updated !!')
         } catch (error) {
             return responseHandler.errorResponse(res, 500, error.message)
         }
@@ -274,6 +274,7 @@ class PropertyController {
 
     async bulkAddProperties(req, res) {
         let cancelledArray = []
+        let have_pa_id_not_mapped = []
         let total = 0
         try {
             const workbook = XLSX.readFile(path.resolve() + '/uploads/' + req.files.bulkfile[0].filename);
@@ -286,14 +287,15 @@ class PropertyController {
             total = project_xlData.length
             if (project_xlData.length > 0) {
                 for (let row in project_xlData) {
+                    console.log(row)
                     try {
                         const obtained_tracks_data = propertyservice.convertToTrackDataFromExcel(project_xlData[row])
                         //checking if data already present with same reraNumber and lastModifiedDate.
                         const is_existing_details_file = await TsSchema.find({ 'reraNumber': obtained_tracks_data.reraNumber, 'lastModifiedDate': new Date(obtained_tracks_data.lastModifiedDate) })
                         if (is_existing_details_file.length > 0) {
                             cancelledArray.push({
-                                reraNumber : project_xlData[row]['RERA No'],
-                                error : `File already exist with rera no: ${obtained_tracks_data.reraNumber} and this modified date.`
+                                reraNumber: project_xlData[row]['RERA No'],
+                                error: `File already exist with rera no: ${obtained_tracks_data.reraNumber} and this modified date.`
                             })
                             continue
                         }
@@ -303,8 +305,8 @@ class PropertyController {
                             if (isPresentWithSameReraNumber.length > 0) {
                                 if (new Date(isPresentWithSameReraNumber[0]['_doc']['lastModifiedDate']) > new Date(obtained_tracks_data.lastModifiedDate)) {
                                     cancelledArray.push({
-                                        reraNumber : project_xlData[row]['RERA No'],
-                                        error : `Please choose greater date than previous last modified date!.`
+                                        reraNumber: project_xlData[row]['RERA No'],
+                                        error: `Please choose greater date than previous last modified date!.`
                                     })
                                     continue
                                 }
@@ -315,12 +317,12 @@ class PropertyController {
                             //     //taking th sheet.
                             const sheet_name_list = workbook.SheetNames;
 
-                            //     //converting sheet to json.
+                            //converting sheet to json.
                             const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
                             if (xlData[0]['TelanganaRERA Application'] === undefined) {
                                 cancelledArray.push({
-                                    reraNumber : project_xlData[row]['RERA No'],
-                                    error : 'File has invalid data!.'
+                                    reraNumber: project_xlData[row]['RERA No'],
+                                    error: 'File has invalid data!.'
                                 })
                                 continue
                             }
@@ -369,23 +371,28 @@ class PropertyController {
                                 try {
                                     await propertyservice.postDataToPropertyAdvisor(res_data, resp_data)
                                 } catch (error) {
-                                    return responseHandler.errorResponse(res, 500, error.message)
+                                    have_pa_id_not_mapped.push({
+                                        reraNumber: project_xlData[row]['RERA No'],
+                                        error: error.message
+                                    })
                                 }
                             }
                         }
 
                     } catch (error) {
                         cancelledArray.push({
-                            reraNumber : project_xlData[row]['RERA No'],
-                            error : error.message
+                            reraNumber: project_xlData[row]['RERA No'],
+                            error: error.message
                         })
                     }
                 }
                 return responseHandler.successResponse(res, 201, 'TS data added successfully.', {
-                   cancelled_count : cancelledArray.length,
-                   total_properties : total,
-                   uploaded : total-cancelledArray.length,
-                    not_accepted_properties : cancelledArray                })
+                    cancelled_count: cancelledArray.length,
+                    total_properties: total,
+                    uploaded: total - cancelledArray.length,
+                    not_accepted_properties: cancelledArray,
+                    un_sync_data_with_PA_ID : have_pa_id_not_mapped
+                })
             } else {
                 return responseHandler.errorResponse(res, 400, 'File has no data!')
             }
