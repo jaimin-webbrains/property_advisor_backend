@@ -5,7 +5,8 @@ const XLSX = require('xlsx');
 const propertyservice = require('../services/propertyservice')
 const path = require('path');
 const propertyFieldHistorySchema = require('../models/propertyFieldHistorySchema');
-const responseHandler = require('../Helper/responseHandler')
+const responseHandler = require('../Helper/responseHandler');
+const { io } = require('../Helper/io');
 
 
 
@@ -291,7 +292,6 @@ class PropertyController {
                     return responseHandler.errorResponse(res, 400, 'Invalid file!')
                 }
                 for (let row in project_xlData) {
-                    console.log(row)
                     try {
                         const obtained_tracks_data = propertyservice.convertToTrackDataFromExcel(project_xlData[row])
                         //checking if data already present with same reraNumber and lastModifiedDate.
@@ -389,6 +389,7 @@ class PropertyController {
                             error: error.message
                         })
                     }
+                    io.emit('get',(row/(project_xlData.length-1))*100)
                 }
                 return responseHandler.successResponse(res, 201, 'TS data added successfully.', {
                     cancelled_count: cancelledArray.length,

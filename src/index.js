@@ -1,10 +1,9 @@
-const express = require("express");
 const cors = require("cors");
-const app = express();
 const port = 3005;
 const conn = require("./db/connection");
 const propertyrouter = require("./routes/property");
 const path = require("path");
+const {io,server,app,express} = require('./Helper/io')
 app.use(express.json());
 app.use(
     express.urlencoded({
@@ -17,19 +16,14 @@ const corsOpts = {
     allowedHeaders: ["Content-Type"],
 };
 app.use(cors(corsOpts));
-// app.use(express.static("uploads"));
+io.on("connection",(socket) => {
+})
 app.use("/uploads", express.static(__dirname.replace("/src", "") + "/uploads"));
 app.use("/property", propertyrouter);
-
-// const root = require("path").join(__dirname, "public");
-// app.use(express.static(root));
-// app.get("*", (req, res) => {
-//     res.sendFile("index.html", { root });
-// });
 app.use("/", express.static(__dirname.replace("/src", "") + "/public"));
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname.replace("/src", ""), "public/index.html"));
 });
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
