@@ -7,6 +7,7 @@ const path = require('path');
 const propertyFieldHistorySchema = require('../models/propertyFieldHistorySchema');
 const responseHandler = require('../Helper/responseHandler');
 const { io } = require('../Helper/io');
+const fs = require('fs');
 
 
 
@@ -391,6 +392,13 @@ class PropertyController {
                     }
                     io.emit('get',(row/(project_xlData.length-1))*100)
                 }
+                try {
+                    const d = new Date()
+                    fs.writeFileSync(path.resolve() + '/uploads/'+d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()+'.txt', JSON.stringify(cancelledArray, null, 2));
+                    // file written successfully
+                  } catch (err) {
+                    console.error(err);
+                  }
                 return responseHandler.successResponse(res, 201, 'TS data added successfully.', {
                     cancelled_count: cancelledArray.length,
                     total_properties: total,

@@ -142,7 +142,7 @@ class PropertyServices {
             result.push(obj)
           }
           if (ext_data[row][0] === '' && ext_data[row][1] === '' && ext_data[row][5] !== '' && ext_data[row][9] === '' && ext_data[row][10] === '') {
-            if (result[result.length - 1]['floor_details'] === undefined) {
+            if (result[result.length - 1] && result[result.length - 1]['floor_details'] === undefined) {
               result[result.length - 1]['floor_details'] = []
             }
             let obj = {}
@@ -386,9 +386,7 @@ class PropertyServices {
         password: process.env.PROPERTY_ADVISOR_UAT_PASSWORD
       }
     }
-  ).then((res) => {
-      console.log(res)
-    })
+  ).then((res) => res)
       .catch((e) => {
         console.log(e)
       })
