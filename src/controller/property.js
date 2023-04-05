@@ -390,7 +390,7 @@ class PropertyController {
                             error: error.message
                         })
                     }
-                    io.emit('get',(row/(project_xlData.length-1))*100)
+                    // io.emit('get',(row/(project_xlData.length-1))*100)
                 }
                 try {
                     const d = new Date()
