@@ -20,14 +20,19 @@ const tsSchema = new mongoose.Schema({
     },
     certExtFileName: {
         type: String
-        },
+    },
     detailsFileName: {
         type: String,
         required: true
     },
-    paId :{
-        type:Number  
-      }
+    paId: {
+        type: Number
+    },
+    city: String,
+    location: String,
+    subAreaName: String,
+    propertyType: String,
+    colonyName: String,
 });
 
 const TsSchema = mongoose.model("tracks", tsSchema);

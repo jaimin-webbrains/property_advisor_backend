@@ -295,7 +295,12 @@ class PropertyServices {
       certFileName: path.resolve() + '/uploads/' + files.certFileName[0].filename,
       certExtFileName: certExt,
       detailsFileName: path.resolve() + '/uploads/' + files.detailsFileName[0].filename,
-      paId: body.paId
+      paId: body.paId,
+      city: body.city,
+      location: body.location,
+      subAreaName: body.subAreaName,
+      propertyType: body.propertyType,
+      colonyName: body.colonyName
     }
     return ({ 'payLoad': payload })
   }
