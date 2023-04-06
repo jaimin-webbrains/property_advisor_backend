@@ -293,6 +293,9 @@ class PropertyController {
                     return responseHandler.errorResponse(res, 400, 'Invalid file!')
                 }
                 for (let row in project_xlData) {
+                    if(row === 0){
+                        io.emit('get',(row/(project_xlData.length-1))*100)
+                    }
                     try {
                         const obtained_tracks_data = propertyservice.convertToTrackDataFromExcel(project_xlData[row])
                         //checking if data already present with same reraNumber and lastModifiedDate.
@@ -302,6 +305,7 @@ class PropertyController {
                                 reraNumber: project_xlData[row]['RERA No'],
                                 error: `File already exist with rera no: ${obtained_tracks_data.reraNumber} and this modified date.`
                             })
+                            io.emit('get',(row/(project_xlData.length-1))*100)
                             continue
                         }
                         else {
@@ -313,6 +317,7 @@ class PropertyController {
                                         reraNumber: project_xlData[row]['RERA No'],
                                         error: `Please choose greater date than previous last modified date!.`
                                     })
+                                    io.emit('get',(row/(project_xlData.length-1))*100)
                                     continue
                                 }
                             }
@@ -329,6 +334,7 @@ class PropertyController {
                                     reraNumber: project_xlData[row]['RERA No'],
                                     error: 'File has invalid data!.'
                                 })
+                                io.emit('get',(row/(project_xlData.length-1))*100)
                                 continue
                             }
 
@@ -390,7 +396,7 @@ class PropertyController {
                             error: error.message
                         })
                     }
-                    // io.emit('get',(row/(project_xlData.length-1))*100)
+                     io.emit('get',(row/(project_xlData.length-1))*100)
                 }
                 try {
                     const d = new Date()

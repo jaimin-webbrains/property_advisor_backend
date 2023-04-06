@@ -142,7 +142,11 @@ class PropertyServices {
             result.push(obj)
           }
           if (ext_data[row][0] === '' && ext_data[row][1] === '' && ext_data[row][5] !== '' && ext_data[row][9] === '' && ext_data[row][10] === '') {
-            if (result[result.length - 1] && result[result.length - 1]['floor_details'] === undefined) {
+            try {
+              if (result[result.length - 1]['floor_details'] === undefined) {
+                result[result.length - 1]['floor_details'] = []
+              }
+            } catch (error) {
               result[result.length - 1]['floor_details'] = []
             }
             let obj = {}
