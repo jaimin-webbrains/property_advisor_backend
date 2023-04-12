@@ -2,14 +2,7 @@ const propertyrouter = require("express").Router();
 const property = require("../controller/property");
 const { upload } = require('../Helper/multer')
 
-propertyrouter.get(
-    '/get_states',
-    property.getAllStates
-)
-propertyrouter.post(
-    '/add_states',
-    property.addStates
-)
+
 propertyrouter.post(
     '/add_all_ts_data',
     upload.fields([

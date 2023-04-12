@@ -1,5 +1,4 @@
 const PropertySchema = require('../models/propertyschema')
-const StateSchema = require('../models/stateSchema')
 const TsSchema = require('../models/tsSchema')
 const XLSX = require('xlsx');
 const propertyservice = require('../services/propertyservice')
@@ -14,28 +13,6 @@ const fs = require('fs');
 class PropertyController {
     constructor() { }
 
-    async getAllStates(req, res) {
-        try {
-            const response = await StateSchema.find({})
-            return responseHandler.successResponse(res, 200, 'States obtained!', response)
-        } catch (error) {
-            return responseHandler.errorResponse(res, 500, error.message)
-        }
-    }
-    async addStates(req, res) {
-        try {
-            let req_data = req.body.state
-            if (req_data !== undefined && req_data !== "") {
-                const stateSchema = new StateSchema({ state_name: req_data })
-                const response = await stateSchema.save()
-                return responseHandler.successResponse(res, 201, 'State added !.', response)
-            } else {
-                return responseHandler.errorResponse(res, 400, "State name is required!")
-            }
-        } catch (error) {
-            return responseHandler.errorResponse(res, 500, error.message)
-        }
-    }
     async addAllTsData(req, res) {
         try {
             //checking if data already present with same reraNumber and lastModifiedDate.
