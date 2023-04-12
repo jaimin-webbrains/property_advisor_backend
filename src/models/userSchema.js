@@ -9,8 +9,8 @@ const user = new mongoose.Schema({
     mobile: {
         type: Number,
         required: true,
-        min:10,
-        max:10
+        min: 10,
+        max: 10
     },
     email: {
         type: String,
