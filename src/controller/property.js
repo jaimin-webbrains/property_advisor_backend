@@ -306,6 +306,14 @@ class PropertyController {
 
                             //converting sheet to json.
                             const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
+                            if(Object.keys(xlData[0]).length > 11){
+                                cancelledArray.push({
+                                    reraNumber: project_xlData[row]['RERA No'],
+                                    error: 'Invalid file with extra column!.'
+                                })
+                                io.emit('get',(row/(project_xlData.length-1))*100)
+                                continue 
+                            }
                             if (xlData[0]['TelanganaRERA Application'] === undefined) {
                                 cancelledArray.push({
                                     reraNumber: project_xlData[row]['RERA No'],
@@ -321,7 +329,17 @@ class PropertyController {
                             const resp_data = await tsSchema.save()
 
                             //converting excel json data to required format as per schema.
-                            const excel_data = await propertyservice.getAllPropertyDetails(xlData, resp_data)
+                            let excel_data
+                            try {
+                                excel_data = await propertyservice.getAllPropertyDetails(xlData, resp_data)
+                            } catch (error) {
+                                await TsSchema.deleteOne({reraNumber : project_xlData[row]['RERA No']})
+                                cancelledArray.push({
+                                    reraNumber: project_xlData[row]['RERA No'],
+                                    error: error.message
+                                })  
+                                continue                          
+                            }
                             const propertySchema = new PropertySchema(excel_data.data)
 
                             //saving property data to propertySchema.
@@ -368,6 +386,7 @@ class PropertyController {
                         }
 
                     } catch (error) {
+                        await TsSchema.deleteOne({reraNumber : project_xlData[row]['RERA No']})
                         cancelledArray.push({
                             reraNumber: project_xlData[row]['RERA No'],
                             error: error.message
