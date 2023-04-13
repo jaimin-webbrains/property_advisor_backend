@@ -31,7 +31,7 @@ class EmailHandler {
                 }
             });
             const mailOptions = {
-                from: process.env.SMTP_MAIL_FROM,
+                from: process.env.SMTP_USER,
                 to: email,
                 subject,
                 html: body,

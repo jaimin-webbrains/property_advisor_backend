@@ -34,7 +34,7 @@ class userController {
                 const resetLink = `${process.env.FRONTEND_URL}/forgotPassword`
                 const response = await newUser.save()
                 delete response._doc.password
-                const msg = await sendAccessKeyEmailTemplate.MailSent({
+                const msg = sendAccessKeyEmailTemplate.MailSent({
                     username: name,
                     email: email,
                     resetLink: resetLink,
@@ -51,6 +51,14 @@ class userController {
                 return responseHandler.errorResponse(res, 500, 'User already exists!')
             }
         } catch (error) {
+            if (error.name === "ValidationError") {
+                let errors = {};
+
+                Object.keys(error.errors).forEach((key) => {
+                    errors[key] = error.errors[key].message;
+                });
+                return responseHandler.errorResponse(res, 400, errors)
+            }
             return responseHandler.errorResponse(res, 500, error.message)
         }
     }

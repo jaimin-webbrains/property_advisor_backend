@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const jwtConfig = require('../config/jwt.config');
-const User = require('../models/superUserSchema');
+const User = require('../models/userSchema');
 
 
 exports.verifyToken = (token) => jwt.verify(token, jwtConfig.secret);

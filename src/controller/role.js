@@ -9,6 +9,10 @@ class RoleController {
         try {
             if (req.body.name !== undefined && req.body.name !== "") {
                 const { name, desc } = req.body
+                const isExist = await Role.exists({name:name})
+                if(isExist){
+                    return responseHandler.errorResponse(res,400,'Role already exists')
+                }
                 const role = new Role({ name, desc })
                 const response = await role.save()
                 return responseHandler.successResponse(res, 201, "Role created", response)

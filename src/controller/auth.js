@@ -1,10 +1,13 @@
-const User = require("../models/superUserSchema");
+const User = require("../models/userSchema");
 const bcrypt = require('bcrypt');
 const jwt = require('../utils/jwt.utils');
 const responseHandler = require("../Helper/responseHandler");
 const OTPSchema = require("../models/otpSchema");
 const emailHandler = require("../mailHandler/emailHandler");
 const resetPasswordTemplate = require("../mailHandler/resetPasswordTemplate");
+const RoleSchema = require("../models/role");
+const ObjectId = require('mongoose').Types.ObjectId; 
+
 
 
 class authController {
@@ -14,8 +17,10 @@ class authController {
             if (!req.body.email && !req.body.password) {
                 return responseHandler.errorResponse(res, 400, 'Email and password is required !')
             }
+            const roleAdmin = await RoleSchema.findOne({name:'admin'})
             const user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                role: new ObjectId(roleAdmin.id)
             });
             if (user) {
                 const isMatched = await bcrypt.compare(req.body.password, user.password);
@@ -28,7 +33,7 @@ class authController {
                     return responseHandler.successResponse(res, 200, 'Success!', response)
                 }
             }
-            return responseHandler.errorResponse(res, 400, 'Invalid credentials!')
+            return responseHandler.errorResponse(res, 400, 'Invalid credentials or not admin role!')
         } catch (error) {
             return responseHandler.errorResponse(res, 400, error.message)
         }

@@ -17,7 +17,7 @@ class SendAccessKeyEmailTemplate {
             data.password +
             "<br /><br /> You can click on the following link :<a href= " +
             data.resetLink +
-            " >click here</a>  and use the credentials provided to login onto the portal.<br/><p>You can email Minbly at " +
+            " >click here</a>  and use the credentials provided to login onto the portal.<br/><p>You can email Property advisor at " +
             process.env.SUPPORT_LINK +
             " in case of any issues. </p> <br/><br/><p>Regards,</p><p>Property Advisor</p><br /><div><img src='cid:logo' height='50' width='150' alt='logo'></img></div>" +
             "</body></html>"
