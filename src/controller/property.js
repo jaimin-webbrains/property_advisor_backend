@@ -265,13 +265,25 @@ class PropertyController {
             const project_xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
             total = project_xlData.length
             if (project_xlData.length > 0) {
+                let filePerUpload = []
+                for(let per = 0 ; per <= 100; per ++){
+                    filePerUpload.push(Math.ceil((project_xlData.length * per)/100))
+                }
                 let keys = Object.keys(project_xlData[0])
                 if(keys.indexOf('RERA No') === -1){
                     return responseHandler.errorResponse(res, 400, 'Invalid file!')
                 }
                 for (let row in project_xlData) {
-                    if(row === 0){
-                        io.emit('get',(row/(project_xlData.length-1))*100)
+                    if(filePerUpload.indexOf(parseInt(row)) > -1){
+                        let percentage = Math.ceil((row/(project_xlData.length-1))*100)
+                        if(percentage <= 99){
+                            parseInt(row) === 0 ? 
+                         io.emit('get',1) :
+                         io.emit('get',percentage)
+                        }
+                    }
+                    if(row == project_xlData.length-1){
+                        io.emit('get',100)
                     }
                     try {
                         const obtained_tracks_data = propertyservice.convertToTrackDataFromExcel(project_xlData[row])
@@ -282,7 +294,6 @@ class PropertyController {
                                 reraNumber: project_xlData[row]['RERA No'],
                                 error: `File already exist with rera no: ${obtained_tracks_data.reraNumber} and this modified date.`
                             })
-                            io.emit('get',(row/(project_xlData.length-1))*100)
                             continue
                         }
                         else {
@@ -294,7 +305,6 @@ class PropertyController {
                                         reraNumber: project_xlData[row]['RERA No'],
                                         error: `Please choose greater date than previous last modified date!.`
                                     })
-                                    io.emit('get',(row/(project_xlData.length-1))*100)
                                     continue
                                 }
                             }
@@ -311,7 +321,6 @@ class PropertyController {
                                     reraNumber: project_xlData[row]['RERA No'],
                                     error: 'Invalid file with extra column!.'
                                 })
-                                io.emit('get',(row/(project_xlData.length-1))*100)
                                 continue 
                             }
                             if (xlData[0]['TelanganaRERA Application'] === undefined) {
@@ -319,7 +328,6 @@ class PropertyController {
                                     reraNumber: project_xlData[row]['RERA No'],
                                     error: 'File has invalid data!.'
                                 })
-                                io.emit('get',(row/(project_xlData.length-1))*100)
                                 continue
                             }
 
@@ -392,7 +400,6 @@ class PropertyController {
                             error: error.message
                         })
                     }
-                     io.emit('get',(row/(project_xlData.length-1))*100)
                 }
                 try {
                     const d = new Date()
