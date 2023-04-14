@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose");
 const responseHandler = require("../Helper/responseHandler");
 const User = require("../models/userSchema");
 const RoleSchema = require("../models/role");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const sendAccessKeyEmailTemplate = require("../mailHandler/sendAccessKeyEmailTemplate");
 const emailHandler = require("../mailHandler/emailHandler");
 

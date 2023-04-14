@@ -1,6 +1,6 @@
 const User = require("../models/userSchema")
 const Role = require("../models/role")
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const ObjectId = require('mongoose').Types.ObjectId; 
 
 

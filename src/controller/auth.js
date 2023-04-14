@@ -1,5 +1,5 @@
 const User = require("../models/userSchema");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('../utils/jwt.utils');
 const responseHandler = require("../Helper/responseHandler");
 const OTPSchema = require("../models/otpSchema");
