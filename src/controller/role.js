@@ -60,7 +60,7 @@ class RoleController {
                 if (exist_role) {
                     exist_role.status = false
                     const response = await exist_role.save()
-                    responseHandler.successResponse(res, 201, "Role updated", response)
+                    responseHandler.successResponse(res, 201, "Role deleted", response)
                 } else {
                     responseHandler.errorResponse(res, 400, "Role doesn't exist!")
                 }

@@ -6,12 +6,24 @@ const citySchema = new mongoose.Schema({
         required: true
     },
     desc: String,
+    status: {
+        type: Boolean,
+        default: true
+    },
     state: {
         type:mongoose.Schema.Types.ObjectId,
         ref:"state"
+    },
+    createdAt: {
+        type: Date,
+        default: new Date()
+    },
+    updatedAt: {
+        type: Date,
+        default: new Date()
     }
  });
 
-const CitySchema = mongoose.model("state", citySchema);
+const CitySchema = mongoose.model("city", citySchema);
 
 module.exports = CitySchema;

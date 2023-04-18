@@ -5,7 +5,19 @@ const stateSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    desc: String
+    status: {
+        type: Boolean,
+        default: true
+    },
+    desc: String,
+    createdAt: {
+        type: Date,
+        default: new Date()
+    },
+    updatedAt: {
+        type: Date,
+        default: new Date()
+    }
  });
 
 const StateSchema = mongoose.model("state", stateSchema);
