@@ -19,7 +19,7 @@ const corsOpts = {
     methods: ["GET", "POST","DELETE"],
     allowedHeaders: ["Content-Type"],
 };
-app.use(cors(corsOpts));
+app.use(cors());
 io.on("connection",(socket) => {
 })
 app.use("/uploads", express.static(__dirname.replace("/src", "") + "/uploads"));

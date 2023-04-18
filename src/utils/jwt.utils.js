@@ -13,9 +13,13 @@ exports.getUser = (req, res, next) => {
           if (err) req.user = undefined;
             User.findOne({
               id: decode.id
-            }).then((d) => {
+            }).populate('role').then((d) => {
                 req.user = d
-                next()
+                if(d.role.name === 'admin'){
+                  next()
+                }else{
+                   throw new  Error('Not a valid permission!')
+                }
             }).catch((e)=>{
                 res.status(401)
                   .send({

@@ -9,6 +9,7 @@ authRouter.post(
 
 authRouter.post(
     '/reset_password',
+    getUser,
     auth.resetPassword
 )
 

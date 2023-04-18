@@ -5,18 +5,22 @@ const userRouter = require("express").Router()
 
 userRouter.post(
     '/add_user',
+    getUser,
     user.addUser
 )
 userRouter.get(
     '/get_user',
+    getUser,
     user.getUser
 )
-userRouter.delete(
+userRouter.post(
     '/delete_user',
+    getUser,
     user.deleteUser
 )
 userRouter.post(
     '/update_user',
+    getUser,
     user.updateUser
 )
 module.exports = userRouter
