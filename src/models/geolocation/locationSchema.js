@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const citySchema = new mongoose.Schema({
+const locationSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -14,6 +14,17 @@ const citySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "state",
   },
+  city: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "city",
+  },
+  zone: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "zone",
+  },
+  locationGrade: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: new Date(),
@@ -24,6 +35,6 @@ const citySchema = new mongoose.Schema({
   },
 });
 
-const CitySchema = mongoose.model("city", citySchema);
+const LocationSchema = mongoose.model("location", locationSchema);
 
-module.exports = CitySchema;
+module.exports = LocationSchema;

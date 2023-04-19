@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const zoneSchema = new mongoose.Schema({
+const subLocationSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -18,6 +18,14 @@ const zoneSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "city",
   },
+  zone: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "zone",
+  },
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "location",
+  },
   createdAt: {
     type: Date,
     default: new Date(),
@@ -28,6 +36,6 @@ const zoneSchema = new mongoose.Schema({
   },
 });
 
-const ZoneSchema = mongoose.model("zone", zoneSchema);
+const SubLocationSchema = mongoose.model("subLocation", subLocationSchema);
 
-module.exports = ZoneSchema;
+module.exports = SubLocationSchema;

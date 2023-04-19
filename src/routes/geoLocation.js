@@ -1,56 +1,108 @@
 const geoLocationRouter = require("express").Router();
-const geoLocationController = require('../controller/geoLocation');
+const geoLocationController = require("../controller/geoLocation");
 const { getUser } = require("../utils/jwt.utils");
 
 geoLocationRouter.get(
-    '/get_states',
-    getUser,
-    geoLocationController.getAllStates
-)
+  "/get_states",
+  getUser,
+  geoLocationController.getAllStates
+);
+geoLocationRouter.post("/add_states", getUser, geoLocationController.addState);
 geoLocationRouter.post(
-    '/add_states',
-    getUser,
-    geoLocationController.addState
-)
+  "/update_states",
+  getUser,
+  geoLocationController.updateState
+);
 geoLocationRouter.post(
-    '/update_states',
-    getUser,
-    geoLocationController.updateState
-)
-geoLocationRouter.post(
-    '/delete_state',
-    getUser,
-    geoLocationController.deleteState
-)
+  "/delete_state",
+  getUser,
+  geoLocationController.deleteState
+);
 geoLocationRouter.get(
-    '/get_cities',
-    getUser,
-    geoLocationController.getAllCities
-)
+  "/get_cities",
+  getUser,
+  geoLocationController.getAllCities
+);
 geoLocationRouter.post(
-    '/add_or_update_city',
-    getUser,
-    geoLocationController.addOrUpdateCity
-)
+  "/add_or_update_city",
+  getUser,
+  geoLocationController.addOrUpdateCity
+);
 geoLocationRouter.post(
-    '/delete_city',
-    getUser,
-    geoLocationController.deleteCity
-)
+  "/delete_city",
+  getUser,
+  geoLocationController.deleteCity
+);
+geoLocationRouter.get("/get_zones", getUser, geoLocationController.getZones);
+geoLocationRouter.post(
+  "/add_or_update_zone",
+  getUser,
+  geoLocationController.addOrUpdateZones
+);
+geoLocationRouter.post(
+  "/delete_zone",
+  getUser,
+  geoLocationController.deleteZone
+);
 geoLocationRouter.get(
-    '/get_zones',
-    getUser,
-    geoLocationController.getZones
-)
+  "/get_districts",
+  getUser,
+  geoLocationController.getDistricts
+);
 geoLocationRouter.post(
-    '/add_or_update_zone',
-    getUser,
-    geoLocationController.addOrUpdateZones
-)
+  "/add_or_update_district",
+  getUser,
+  geoLocationController.add_or_update_district
+);
 geoLocationRouter.post(
-    '/delete_zone',
-    getUser,
-    geoLocationController.deleteZone
-)
+  "/delete_district",
+  getUser,
+  geoLocationController.deleteDistrict
+);
+geoLocationRouter.get(
+  "/get_sub_districts",
+  getUser,
+  geoLocationController.getSubDistricts
+);
+geoLocationRouter.post(
+  "/add_or_update_sub_district",
+  getUser,
+  geoLocationController.add_or_update_sub_district
+);
+geoLocationRouter.post(
+  "/delete_sub_district",
+  getUser,
+  geoLocationController.deleteSubDistrict
+);
+geoLocationRouter.get(
+  "/get_locations",
+  getUser,
+  geoLocationController.getLocations
+);
+geoLocationRouter.post(
+  "/add_or_update_location",
+  getUser,
+  geoLocationController.add_or_update_location
+);
+geoLocationRouter.post(
+  "/delete_location",
+  getUser,
+  geoLocationController.deleteLocation
+);
+geoLocationRouter.get(
+  "/get_sub_locations",
+  getUser,
+  geoLocationController.getSubLocations
+);
+geoLocationRouter.post(
+  "/add_or_update_sub_location",
+  getUser,
+  geoLocationController.add_or_update_sub_location
+);
+geoLocationRouter.post(
+  "/delete_sub_location",
+  getUser,
+  geoLocationController.deleteSubLocation
+);
 
-module.exports = geoLocationRouter
+module.exports = geoLocationRouter;
