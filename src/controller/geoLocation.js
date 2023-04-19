@@ -247,7 +247,7 @@ class GeolocationController {
       zoneData.description = description;
       zoneData.updatedAt = new Date();
       const response = await zoneData.save();
-      return responseHandler.successResponse(res, 201, "Created!", response);
+      return responseHandler.successResponse(res, 201, "Created!", {zoneData,city});
     } catch (error) {
       return responseHandler.errorResponse(res, 500, error.message);
     }
@@ -258,11 +258,11 @@ class GeolocationController {
       const { _id } = req.body;
       if (!_id)
         return responseHandler.errorResponse(res, 400, "Id is required!");
-      const zoneData = await ZoneSchema.findOne({ _id: new ObjectId(_id) });
+      const zoneData = await ZoneSchema.findOne({ _id: new ObjectId(_id) }).populate('city');
       if (!zoneData)
         return responseHandler.errorResponse(res, 400, "No data foound!");
       zoneData.status = false;
-      const response = await zoneData.save();
+      const response = await zoneData.save()
       return responseHandler.successResponse(
         res,
         200,
