@@ -10,14 +10,10 @@ const districtSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  // state: {
-  //     type:mongoose.Schema.Types.ObjectId,
-  //     ref:"state"
-  // },
-  // city: {
-  //     type:mongoose.Schema.Types.ObjectId,
-  //     ref:"city"
-  // },
+  state: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "state",
+  },
   createdAt: {
     type: Date,
     default: new Date(),

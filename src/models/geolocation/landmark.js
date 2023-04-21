@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const locationSchema = new mongoose.Schema({
+const landMarkSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -10,6 +10,10 @@ const locationSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  district: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "district",
+  },
   state: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "state",
@@ -18,16 +22,17 @@ const locationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "city",
   },
-  district: {
+  location: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "district",
+    ref: "location",
+  },
+  subLocation: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "subLocation",
   },
   zone: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "zone",
-  },
-  locationGrade: {
-    type: String,
   },
   createdAt: {
     type: Date,
@@ -39,6 +44,6 @@ const locationSchema = new mongoose.Schema({
   },
 });
 
-const LocationSchema = mongoose.model("location", locationSchema);
+const LandMarkSchema = mongoose.model("landmark", landMarkSchema);
 
-module.exports = LocationSchema;
+module.exports = LandMarkSchema;

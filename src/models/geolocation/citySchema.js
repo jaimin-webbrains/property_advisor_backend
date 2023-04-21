@@ -14,6 +14,10 @@ const citySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "state",
   },
+  district: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "district",
+  },
   createdAt: {
     type: Date,
     default: new Date(),

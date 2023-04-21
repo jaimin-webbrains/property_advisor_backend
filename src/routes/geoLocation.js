@@ -60,19 +60,19 @@ geoLocationRouter.post(
   geoLocationController.deleteDistrict
 );
 geoLocationRouter.get(
-  "/get_sub_districts",
+  "/get_landmarks",
   getUser,
-  geoLocationController.getSubDistricts
+  geoLocationController.getLandmarks
 );
 geoLocationRouter.post(
-  "/add_or_update_sub_district",
+  "/add_or_update_landmark",
   getUser,
-  geoLocationController.add_or_update_sub_district
+  geoLocationController.add_or_update_landmark
 );
 geoLocationRouter.post(
-  "/delete_sub_district",
+  "/delete_landmark",
   getUser,
-  geoLocationController.deleteSubDistrict
+  geoLocationController.deletelandmark
 );
 geoLocationRouter.get(
   "/get_locations",

@@ -14,6 +14,10 @@ const zoneSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "state",
   },
+  district: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "district",
+  },
   city: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "city",
