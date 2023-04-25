@@ -122,6 +122,8 @@ const org_cont_details_keys = [
     'Office Number'
 ]
 
+const ROLE_ADMIN = 'admin'
+
 module.exports = {
     main_fields,
     parent_keys,
@@ -134,6 +136,6 @@ module.exports = {
     project_info_keys,
     land_details_keys,
     build_up_details_keys,
-    org_cont_details_keys
-
+    org_cont_details_keys,
+    ROLE_ADMIN
 }

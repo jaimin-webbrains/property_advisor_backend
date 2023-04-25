@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const jwtConfig = require('../config/jwt.config');
 const User = require('../models/userSchema');
+const { ROLE_ADMIN } = require('../Helper/constants');
 
 
 exports.verifyToken = (token) => jwt.verify(token, jwtConfig.secret);
@@ -15,7 +16,7 @@ exports.getUser = (req, res, next) => {
               id: decode.id
             }).populate('role').then((d) => {
                 req.user = d
-                if(d.role.name === 'admin'){
+                if(d.role.name === ROLE_ADMIN){
                   next()
                 }else{
                    throw new  Error('Not a valid permission!')

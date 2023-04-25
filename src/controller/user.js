@@ -5,6 +5,7 @@ const RoleSchema = require("../models/role");
 const bcrypt = require('bcryptjs');
 const sendAccessKeyEmailTemplate = require("../mailHandler/sendAccessKeyEmailTemplate");
 const emailHandler = require("../mailHandler/emailHandler");
+const { ROLE_ADMIN } = require("../Helper/constants");
 const ObjectId = require('mongoose').Types.ObjectId; 
 
 
@@ -65,7 +66,7 @@ class userController {
     }
     async getUser(req, res) {
         try {
-            const roleData = await RoleSchema.findOne({name:'admin'})
+            const roleData = await RoleSchema.findOne({name:ROLE_ADMIN})
             return responseHandler.successResponse(res, 200, 'Data obtaained!', await User.find({status:true,role : {$ne : new ObjectId(roleData.id)}},{password:0}).populate("role"))
         } catch (error) {
             return responseHandler.errorResponse(res, 500, error.message)

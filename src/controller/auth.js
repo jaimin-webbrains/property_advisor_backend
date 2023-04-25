@@ -6,6 +6,7 @@ const OTPSchema = require("../models/otpSchema");
 const emailHandler = require("../mailHandler/emailHandler");
 const resetPasswordTemplate = require("../mailHandler/resetPasswordTemplate");
 const RoleSchema = require("../models/role");
+const { ROLE_ADMIN } = require("../Helper/constants");
 const ObjectId = require('mongoose').Types.ObjectId; 
 
 
@@ -17,7 +18,7 @@ class authController {
             if (!req.body.email && !req.body.password) {
                 return responseHandler.errorResponse(res, 400, 'Email and password is required !')
             }
-            const roleAdmin = await RoleSchema.findOne({name:'admin'})
+            const roleAdmin = await RoleSchema.findOne({name:ROLE_ADMIN})
             const user = await User.findOne({
                 email: req.body.email,
                 role: new ObjectId(roleAdmin.id)
@@ -70,7 +71,7 @@ class authController {
             const {email} = req.body
             const user = await User.findOne({'email':email})
             if(user){
-              let random_otp = Math.trunc(Math.random()*10000)
+              let random_otp = Math.floor(1000 + Math.random() * 9000)
               const OTP_Payload = new OTPSchema({
                 email: email,
                 otp: random_otp,
