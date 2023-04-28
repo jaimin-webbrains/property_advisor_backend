@@ -13,7 +13,7 @@ exports.getUser = (req, res, next) => {
         jwt.verify(req.headers.authorization.split(' ')[1], jwtConfig.secret, function (err, decode) {
           if (err) req.user = undefined;
             User.findOne({
-              id: decode.id
+              _id: decode._id
             }).populate('role').then((d) => {
                 req.user = d
                 if(d.role.name === ROLE_ADMIN){
