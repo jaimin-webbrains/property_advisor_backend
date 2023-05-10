@@ -21,7 +21,7 @@ class authController {
             const roleAdmin = await RoleSchema.findOne({name:ROLE_ADMIN})
             const user = await User.findOne({
                 email: req.body.email,
-                role: new ObjectId(roleAdmin.id)
+                role: new ObjectId(roleAdmin._doc._id)
             });
             if (user) {
                 const isMatched = await bcrypt.compare(req.body.password, user.password);
