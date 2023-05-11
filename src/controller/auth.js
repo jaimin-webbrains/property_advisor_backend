@@ -18,10 +18,10 @@ class authController {
             if (!req.body.email && !req.body.password) {
                 return responseHandler.errorResponse(res, 400, 'Email and password is required !')
             }
-            const roleAdmin = await RoleSchema.findOne({name:'admin'})
+            const roleAdmin = await RoleSchema.findOne({name:ROLE_ADMIN})
             const user = await User.findOne({
                 email: req.body.email,
-                role: new ObjectId(roleAdmin._id)
+                role: roleAdmin._id
             });
             if (user) {
                 const isMatched = await bcrypt.compare(req.body.password, user.password);
