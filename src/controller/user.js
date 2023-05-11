@@ -32,8 +32,9 @@ class userController {
                     role: roleData[0],
                     password: await bcrypt.hash(password, 10)
                 }
+                const FRONTEND_URL = process.env.IS_LIVE === "false" ? process.env.FRONTEND_URL : process.env.FRONTEND_LIVE_URL
                 const newUser = new User(payload)
-                const resetLink = `${process.env.FRONTEND_URL}/forgotPassword`
+                const resetLink = `${FRONTEND_URL}/forgotPassword`
                 const response = await newUser.save()
                 delete response._doc.password
                 const msg = sendAccessKeyEmailTemplate.MailSent({

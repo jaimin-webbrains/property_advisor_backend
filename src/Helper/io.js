@@ -4,9 +4,10 @@ const app = express();
 const http = require('http')
 const {Server} = require('socket.io')
 const server = http.createServer(app)
+const FRONTEND_URL = process.env.IS_LIVE === "false" ? process.env.FRONTEND_URL : process.env.FRONTEND_LIVE_URL
 const io = new Server(server,{
     cors: {
-        origin: process.env.FRONTEND_URL,
+        origin: FRONTEND_URL,
         methods: ["GET","POST"]
     }
 })
