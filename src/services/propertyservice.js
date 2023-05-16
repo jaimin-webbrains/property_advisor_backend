@@ -389,6 +389,7 @@ class PropertyServices {
   }
 
   async postDataToPropertyAdvisor(data) {
+    console.log(data)
     const post_response = await axios.post(process.env.PROPERTY_ADVISOR_DOMAIN_NAME+'/Apis/StaticPagesApi/update_property_data', JSON.stringify(data),{
       auth: {
         username: process.env.PROPERTY_ADVISOR_UAT_USERNAME,
