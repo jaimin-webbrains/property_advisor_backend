@@ -283,6 +283,9 @@ class PropertyServices {
     const files = req.files
     const body = req.body
     const certExt = files.certExtFileName && files.certExtFileName[0] ? path.resolve() + '/uploads/' + files.certExtFileName[0].filename : ''
+    const image = files.image && files.image[0] ? path.resolve() + '/uploads/' + files.image[0].filename : ""
+    const mainImage = files.mainImage && files.mainImage[0] ? path.resolve() + '/uploads/' + files.mainImage[0].filename : ""
+
     // task details schema payload.
     const payload = {
       state: body.state,
@@ -300,7 +303,47 @@ class PropertyServices {
       location: body.location,
       subAreaName: body.subAreaName,
       propertyType: body.propertyType,
-      colonyName: body.colonyName
+      colonyName: body.colonyName,
+      sellerMobile : body.sellerMobile !== "" ? body.sellerMobile : 0 ,
+      propertyInsert : body.propertyInsert,
+      propertyStatus : body.propertyStatus,
+      propertyFor : body.propertyFor,
+      propertyCategory : body.propertyCategory,
+      propertyName : body.propertyName,
+      newsPaperName : body.newsPaperName,
+      surveyBy : body.surveyBy,
+      surveyDate : body.surveyDate ? body.surveyDate : 0,
+      occupencyDate : body.occupencyDate ? body.occupencyDate : 0,
+      propertySpoc : body.propertySpoc,
+      gatedCommunityType : body.gatedCommunityType,
+      propertyStatus2 : body.propertyStatus2,
+      loanBanks : body.loanBanks,
+      totalFloors : body.totalFloors ? body.totalFloors : 0,
+      openSpaceArea : body.openSpaceArea ? body.openSpaceArea : 0,
+      dataEntryBy : body.dataEntryBy,
+      newOrResale : body.newOrResale,
+      reraStatus : body.reraStatus,
+      price : body.price ? body.price : 0,
+      projectGrade : body.projectGrade,
+      propertyDescription : body.propertyDescription,
+      propertySubType : body.propertySubType,
+      facing : body.facing,
+      sizePerUnit : body.sizePerUnit ? body.sizePerUnit : 0 ,
+      amenitiesCharges : body.amenitiesCharges ? body.amenitiesCharges : 0,
+      otherCharges : body.otherCharges ? body.otherCharges : 0,
+      totalUnits : body.totalUnits ? body.totalUnits : 0,
+      totalAvailableUnits : body.totalAvailableUnits ? body.totalAvailableUnits : 0,
+      plotLayoutDescription : body.plotLayoutDescription,
+      dimensionsRooms : body.dimensionsRooms,
+      description : body.description,
+      length : body.length ? body.length : 0,
+      width : body.width ? body.width : 0,
+      nearByPlaces : body.nearByPlaces,
+      amenities : body.amenities,
+      selletComments : body.selletComments,
+      advisorComments : body.advisorComments,
+      image : image,
+      mainImage : mainImage
     }
     return ({ 'payLoad': payload })
   }
@@ -416,7 +459,47 @@ class PropertyServices {
     payLoad.reraApprovedDate = typeof(data['RERA Approved Date']) !== 'string' ? ExcelSerialDateToJSDate(data['RERA Approved Date']) : new Date(data['RERA Approved Date'].trim())
     payLoad.reraNumber = data['RERA No']
     payLoad.paId = data['PA ID']
-
+    payLoad.sellerMobile = data['Seller Mobile:']
+    payLoad.propertyInsert = data['Property Insert']
+    payLoad.propertyStatus = data['Property Status']
+    payLoad.propertyFor = data['Property For: ']
+    payLoad.propertyCategory = data['Property Category:']
+    payLoad.propertyName = data['Property Type']
+    payLoad.newsPaperName = data['Property Name:']
+    payLoad.surveyBy = data['Survey By:']
+    payLoad.surveyDate = data['Survey Date: ']
+    payLoad.occupencyDate = data['Occupency Date']
+    payLoad.propertySpoc = data['Property Spoc: ']
+    payLoad.gatedCommunityType = data['Gated Community Type:']
+    payLoad.propertyStatus2 = data['Property Status']
+    payLoad.loanBanks = data['Loan Banks']
+    payLoad.totalFloors = data['Total Floors']
+    payLoad.openSpaceArea = data['Project Open Space Area (%): *']
+    payLoad.commonArea = data['Common Area(%)']
+    payLoad.dataEntryBy = data['Data Entry By:']
+    payLoad.newOrResale = data['New/Resale:']
+    payLoad.reraStatus = data['Select Rera Status:']
+    payLoad.price = data['Price:']
+    payLoad.projectGrade = data['Project Grade']
+    payLoad.propertyDescription = data['Property Description']
+    payLoad.propertySubType = data['Property sub type:']
+    payLoad.facing = data['Facing']
+    payLoad.sizePerUnit = data['Size/Unit']
+    payLoad.amenitiesCharges = data['Amenities Charges']
+    payLoad.otherCharges = data['Other Charges (Rs/-):']
+    payLoad.totalUnits = data['Total Units']
+    payLoad.totalAvailableUnits = data['Total Available Units']
+    payLoad.plotLayoutDescription = data['Floor Plan/Plot Layout Discription']
+    payLoad.dimensionsRooms = data['Dimensions/Rooms']
+    payLoad.description = data['Description']
+    payLoad.length = data['Length']
+    payLoad.width = data['Width']
+    payLoad.nearByPlaces = data['Nearby Places']
+    payLoad.amenities = data['Amenities']
+    payLoad.selletComments = data['Seller Comments']
+    payLoad.advisorComments = data['Adviser Comments']
+    payLoad.image = path.resolve() + '/uploads/'+ data['Image']
+    payLoad.mainImage = path.resolve() + '/uploads/'+ data['Property Main Photo']
     return payLoad
   }
 }

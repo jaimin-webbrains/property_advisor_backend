@@ -43,7 +43,7 @@ const tsSchema = new mongoose.Schema({
     surveyBy : String,
     surveyDate : Date,
     occupencyDate : Date,
-    properySpoc : String,
+    propertySpoc : String,
     gatedCommunityType : String,
     propertyStatus2 : String,
     loanBanks : String,
