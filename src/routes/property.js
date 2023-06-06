@@ -16,6 +16,18 @@ propertyrouter.post(
     ]),
     property.addAllTsData
 )
+propertyrouter.post(
+    '/add_all_new_ts_data',
+    getUser,
+    upload.fields([
+        { name: 'certFileName', maxCount: 1 },
+        { name: 'certExtFileName', maxCount: 1 },
+        { name: 'detailsFileName', maxCount: 1 },
+        { name: 'image', maxCount: 1 },
+        { name: 'mainImage', maxCount: 1 },
+    ]),
+    property.addAllTsData
+)
 propertyrouter.get(
     '/get_all_ts_data',
     getUser,
