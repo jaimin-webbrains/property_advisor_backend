@@ -432,8 +432,21 @@ class PropertyServices {
   }
 
   async postDataToPropertyAdvisor(data) {
-    console.log(data)
     const post_response = await axios.post(process.env.PROPERTY_ADVISOR_DOMAIN_NAME+'/Apis/StaticPagesApi/update_property_data', JSON.stringify(data),{
+      auth: {
+        username: process.env.PROPERTY_ADVISOR_UAT_USERNAME,
+        password: process.env.PROPERTY_ADVISOR_UAT_PASSWORD
+      }
+    }
+  ).then((res) => res)
+      .catch((e) => {
+        console.log(e)
+      })
+    return post_response
+  }
+
+  async postDataToPropertyAdvisorForNewRera(data) {
+    const post_response = await axios.post(process.env.PROPERTY_ADVISOR_DOMAIN_NAME+'/Apis/ReviewPropertyApi/review_property_data', JSON.stringify(data),{
       auth: {
         username: process.env.PROPERTY_ADVISOR_UAT_USERNAME,
         password: process.env.PROPERTY_ADVISOR_UAT_PASSWORD
