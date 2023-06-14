@@ -446,7 +446,7 @@ class PropertyServices {
   }
 
   async postDataToPropertyAdvisorForNewRera(data) {
-    const post_response = await axios.post(process.env.PROPERTY_ADVISOR_DOMAIN_NAME+'/Apis/ReviewPropertyApi/review_property_data', JSON.stringify(data),{
+    const post_response = await axios.post(process.env.PROPERTY_ADVISOR_DOMAIN_NAME+'/Apis/ReviewPropertyApi/review_property_data', JSON.stringify(data[0]),{
       auth: {
         username: process.env.PROPERTY_ADVISOR_UAT_USERNAME,
         password: process.env.PROPERTY_ADVISOR_UAT_PASSWORD
